@@ -82,7 +82,7 @@ public class Registrar implements RegistrarRemote, RegistrarLocal {
         if (game.getId() == 0)
             em.persist(game);
         else
-            game = em.find(game.getClass(), game.getId());
+            game = em.merge(game);
         game.setMessageSender(messageSender);
         registrant = em.merge(registrant);
         registrant.setLastRegistration(System.currentTimeMillis());
@@ -101,7 +101,7 @@ public class Registrar implements RegistrarRemote, RegistrarLocal {
         if (game.getId() == 0)
             em.persist(game);
         else
-            game = em.find(game.getClass(), game.getId());
+            game = em.merge(game);
         game.setMessageSender(messageSender);
         game.registerAgent (agent);
         messageSender.sendPlayerChange(game);
