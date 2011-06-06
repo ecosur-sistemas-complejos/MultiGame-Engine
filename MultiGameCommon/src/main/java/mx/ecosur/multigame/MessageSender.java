@@ -38,7 +38,7 @@ public class MessageSender {
 
     private static Logger logger = Logger.getLogger(MessageSender.class.getCanonicalName());
 
-    private static final String CONNECTION_FACTORY_JNDI_NAME = "ConnectionFactory";
+    private static final String CONNECTION_FACTORY_JNDI_NAME = "XAConnectionFactory";
 
     private static final String TOPIC_JNDI_NAME = "MultiGame";
 
