@@ -29,9 +29,9 @@ public abstract class GridPlayer implements Comparable, GamePlayer {
 
     private int id;
 
-    private GridRegistrant registrant;
-
     private Color color;
+
+    private String name;
 
     private boolean turn;
 
@@ -45,8 +45,8 @@ public abstract class GridPlayer implements Comparable, GamePlayer {
     }
 
     public GridPlayer (GridRegistrant registrant, Color color) {
-        this.registrant = registrant;
         this.color = color;
+        this.name = registrant.getName();
     }
 
     @Id
@@ -59,13 +59,12 @@ public abstract class GridPlayer implements Comparable, GamePlayer {
         this.id = id;
     }
 
-    @OneToOne (cascade={CascadeType.PERSIST, CascadeType.MERGE})
-    public GridRegistrant getRegistrant() {
-        return registrant;
+    public String getName() {
+        return name;
     }
 
-    public void setRegistrant (GridRegistrant r) {
-        this.registrant = r;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Enumerated (EnumType.STRING)
@@ -90,8 +89,7 @@ public abstract class GridPlayer implements Comparable, GamePlayer {
         boolean ret = false;
         if (obj instanceof GridPlayer) {
             GridPlayer test = (GridPlayer) obj;
-            ret = registrant.getName().equals(test.getRegistrant().getName()) &&
-                registrant.getId() == test.getId();
+            ret = (id == test.id);
         }
 
         return ret;
@@ -99,12 +97,12 @@ public abstract class GridPlayer implements Comparable, GamePlayer {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(id).append(color).append(registrant).append(turn).toHashCode();
+        return new HashCodeBuilder().append(id).append(color).append(name).append(turn).toHashCode();
     }
 
     @Override
     public String toString() {
-        return registrant.getName() + ", " + color.name() + ", turn=" + turn;
+        return name + ", " + color.name() + ", turn=" + turn;
     }
 
     @Override
