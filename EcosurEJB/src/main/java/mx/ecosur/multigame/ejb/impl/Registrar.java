@@ -124,7 +124,7 @@ public class Registrar implements RegistrarRemote, RegistrarLocal {
     public List<Game> getUnfinishedGames(Registrant player) {
         List<Game> ret = new ArrayList<Game>();
         Query query = em.createNamedQuery("GridGame.GetCurrentGames");
-        query.setParameter("registrant", player);
+        query.setParameter("registrant", player.getName());
         query.setParameter("state", GameState.ENDED);
         List<Game> games = query.getResultList();
         for (Game game : games) {
@@ -140,7 +140,7 @@ public class Registrar implements RegistrarRemote, RegistrarLocal {
     public List<Game> getPendingGames(Registrant player) {
         List<Game> ret = new ArrayList<Game>();
         Query query = em.createNamedQuery("GridGame.GetAvailableGames");
-        query.setParameter("registrant", player);
+        query.setParameter("registrant", player.getName());
         query.setParameter("state", GameState.WAITING);
         List<Game> games = query.getResultList();
 
@@ -148,7 +148,7 @@ public class Registrar implements RegistrarRemote, RegistrarLocal {
             Game game = impl;
             boolean member = false;
             for (GamePlayer p : game.listPlayers()) {
-                if (p.getRegistrant().equals(player)) {
+                if (p.getName().equals(player.getName())) {
                     member = true;
                     break;
                 }
