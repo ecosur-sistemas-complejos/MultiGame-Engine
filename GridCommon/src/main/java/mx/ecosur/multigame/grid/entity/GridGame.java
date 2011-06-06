@@ -36,11 +36,11 @@ import org.hibernate.annotations.SortType;
 @NamedQueries( {
     @NamedQuery(name = "GridGame.GetCurrentGames",
         query = "SELECT DISTINCT gme FROM GridGame AS gme JOIN gme.players AS player " +
-            "WHERE gme.state <> :state AND player.registrant = :registrant AND " +
+            "WHERE gme.state <> :state AND player.name = :registrant AND " +
             "player MEMBER OF gme.players"),
     @NamedQuery(name = "GridGame.GetAvailableGames",
         query = "SELECT DISTINCT gme FROM GridGame AS gme JOIN gme.players as player " +
-            "WHERE gme.state = :state AND player.registrant <> :registrant")
+            "WHERE gme.state = :state AND player.name <> :registrant")
 })
 @Entity
 public abstract class GridGame implements Game, Cloneable {
