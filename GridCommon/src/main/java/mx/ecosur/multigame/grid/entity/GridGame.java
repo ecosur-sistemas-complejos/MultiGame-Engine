@@ -59,8 +59,6 @@ public abstract class GridGame implements Game, Cloneable {
 
     protected GameState state;
         
-    protected long version;
-
     private int rows, columns;
     
     private String gameType;
@@ -159,15 +157,6 @@ public abstract class GridGame implements Game, Cloneable {
 
     public void setRows(int rows) {
         this.rows = rows;
-    }
-
-    @Version
-    public long getVersion () {
-        return version;
-    }
-
-    public void setVersion (long version) {
-        this.version = version;
     }
 
     /**

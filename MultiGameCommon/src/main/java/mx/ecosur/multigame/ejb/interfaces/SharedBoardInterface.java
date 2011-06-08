@@ -15,10 +15,7 @@ import java.util.Collection;
 
 import mx.ecosur.multigame.exception.InvalidMoveException;
 import mx.ecosur.multigame.exception.InvalidSuggestionException;
-import mx.ecosur.multigame.model.interfaces.ChatMessage;
-import mx.ecosur.multigame.model.interfaces.Game;
-import mx.ecosur.multigame.model.interfaces.Move;
-import mx.ecosur.multigame.model.interfaces.Suggestion;
+import mx.ecosur.multigame.model.interfaces.*;
 
 public interface SharedBoardInterface {
     /**
