@@ -82,11 +82,12 @@ public class Registrar implements RegistrarRemote, RegistrarLocal {
         if (game.getId() == 0)
             em.persist(game);
         else
-            game = em.merge(game);
+            game = em.find(game.getClass(), game.getId());
         game.setMessageSender(messageSender);
         registrant = em.merge(registrant);
         registrant.setLastRegistration(System.currentTimeMillis());
         game.registerPlayer (registrant);
+        em.flush();
         messageSender.sendPlayerChange(game);
         return game;
     }
@@ -101,9 +102,10 @@ public class Registrar implements RegistrarRemote, RegistrarLocal {
         if (game.getId() == 0)
             em.persist(game);
         else
-            game = em.merge(game);
+            game = em.find(game.getClass(), game.getId());
         game.setMessageSender(messageSender);
         game.registerAgent (agent);
+        em.flush();
         messageSender.sendPlayerChange(game);
         return game;
     }

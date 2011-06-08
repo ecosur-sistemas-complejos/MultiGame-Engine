@@ -64,15 +64,25 @@ public class AgentListener implements MessageListener {
                     matched = true;
                     Game game = (Game) msg.getObject();
                     List<GamePlayer> players = game.listPlayers();
+                    Agent agent = null;
                     for (GamePlayer p : players) {
                         if (p instanceof Agent) {
-                            Agent agent = (Agent) p;
-                            if (agent.ready()) {
-                                Set<Move> moves = agent.determineMoves(game);
-                                if (moves.isEmpty())
-                                    throw new RuntimeException ("Agent unable to find move!");
-                                moved = sharedBoard.doMove(game, moves.iterator().next());
+                            Agent a = (Agent) p;
+                            if (a.ready()) {
+                                agent = a;
+                                break;
                             }
+                        }
+                    }
+
+                    if (agent != null) {
+                        if (agent.ready()) {
+                            Set<Move> moves = agent.determineMoves(game);
+                            if (moves.isEmpty())
+                                throw new RuntimeException ("Agent unable to find move!");
+                            Move move = moves.iterator().next();
+                            move.setPlayerModel(agent);
+                            moved = sharedBoard.doMove(game, move);
                         }
                     }
                 }
@@ -91,20 +101,13 @@ public class AgentListener implements MessageListener {
                             if (p instanceof Agent) {
                                 Agent agent = (Agent) p;
                                 suggestion = (agent.processSuggestion (game, suggestion));
+                                SuggestionStatus newStatus = suggestion.getStatus();
+                                if (oldStatus != newStatus && (
+                                        newStatus.equals(SuggestionStatus.ACCEPT) || newStatus.equals(SuggestionStatus.REJECT)))
+                                {
+                                    sharedBoard.makeSuggestion (game, suggestion);
+                                }
                             }
-                        }
-
-                        SuggestionStatus newStatus = suggestion.getStatus();
-
-                        if (oldStatus != newStatus && (
-                                newStatus.equals(SuggestionStatus.ACCEPT) || newStatus.equals(SuggestionStatus.REJECT)))
-                        {
-                             try {
-                                 sharedBoard.makeSuggestion (game, suggestion);
-                             } catch (InvalidSuggestionException e) {
-                                 logger.severe("InvalidSuggestionException: " + e.getMessage());
-                                 e.printStackTrace();
-                             }
                         }
                     }
                 }
@@ -118,6 +121,9 @@ public class AgentListener implements MessageListener {
             logger.warning ("RuntimeException generated! " + e.getMessage());
             e.printStackTrace();
         } catch (InvalidMoveException e) {
+            logger.severe(e.getMessage());
+            e.printStackTrace();
+        } catch (InvalidSuggestionException e) {
             logger.severe(e.getMessage());
             e.printStackTrace();
         }
