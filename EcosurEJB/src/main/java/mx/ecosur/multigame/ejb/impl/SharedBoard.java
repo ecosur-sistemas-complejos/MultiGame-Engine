@@ -20,6 +20,8 @@
 package mx.ecosur.multigame.ejb.impl;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.annotation.security.RolesAllowed;
@@ -82,8 +84,32 @@ public class SharedBoard implements SharedBoardLocal, SharedBoardRemote {
         /* Now that entities are managed, execute rules on move and game */
         game.setMessageSender(messageSender);
         game.move (move);
+        em.flush();
+
         if (move.getStatus().equals(MoveStatus.INVALID))
             throw new InvalidMoveException ("INVALID Move. [" + move.toString() + "]");
+
+        /* Handle case of agents */
+		/* TODO: implement contract for sorted set of players */
+        List<GamePlayer> players = game.listPlayers();
+        for (int i = 0; i < players.size(); i++) {
+           GamePlayer p = players.get(i);
+           /* Spin until no more agents */
+           if (p instanceof Agent) {
+               Agent a = (Agent) p;
+               if (a.ready()) {
+                   Set<Move> moves = a.determineMoves(game);
+                   for (Move m : moves) {
+                      game.move(m);
+                      if (m.getStatus() != MoveStatus.INVALID) {
+                          em.flush();
+                          break;
+                      }
+                   }
+                }
+           }
+        }
+
         return move;
     }
 

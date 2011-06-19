@@ -41,12 +41,7 @@ public class AgentListener implements MessageListener {
     @EJB
     private SharedBoardLocal sharedBoard;
 
-    @Resource
-    private MessageDrivenContext mdContext;
-
     private static Logger logger = Logger.getLogger(AgentListener.class.getCanonicalName());
-
-    private static GameEvent[] gameEvents = { GameEvent.PLAYER_CHANGE };
 
     private static GameEvent[] suggestionEvents = { GameEvent.SUGGESTION_APPLIED, GameEvent.SUGGESTION_EVALUATED};
 
@@ -59,54 +54,25 @@ public class AgentListener implements MessageListener {
             String gameEvent = message.getStringProperty("GAME_EVENT");
             GameEvent event = GameEvent.valueOf(gameEvent);
             ObjectMessage msg = (ObjectMessage) message;
-            for (GameEvent possible : gameEvents) {
-                if (event.equals(possible)) {                    
+
+            for (GameEvent possible : suggestionEvents) {
+                if (event.equals(possible)) {
                     matched = true;
-                    Game game = (Game) msg.getObject();
+                    Suggestion suggestion = (Suggestion) msg.getObject();
+                    SuggestionStatus oldStatus = suggestion.getStatus();
+                    int gameId = new Integer (message.getStringProperty("GAME_ID")).intValue();
+                    Game game = sharedBoard.getGame(gameId);
                     List<GamePlayer> players = game.listPlayers();
-                    Agent agent = null;
                     for (GamePlayer p : players) {
                         if (p instanceof Agent) {
-                            Agent a = (Agent) p;
-                            if (a.ready()) {
-                                agent = a;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (agent != null) {
-                        if (agent.ready()) {
-                            Set<Move> moves = agent.determineMoves(game);
-                            if (moves.isEmpty())
-                                throw new RuntimeException ("Agent unable to find move!");
-                            Move move = moves.iterator().next();
-                            move.setPlayerModel(agent);
-                            moved = sharedBoard.doMove(game, move);
-                        }
-                    }
-                }
-            }
-
-            if (!matched) {
-                for (GameEvent possible : suggestionEvents) {
-                    if (event.equals(possible)) {
-                        matched = true;
-                        Suggestion suggestion = (Suggestion) msg.getObject();
-                        SuggestionStatus oldStatus = suggestion.getStatus();
-                        int gameId = new Integer (message.getStringProperty("GAME_ID")).intValue();
-                        Game game = sharedBoard.getGame(gameId);
-                        List<GamePlayer> players = game.listPlayers();
-                        for (GamePlayer p : players) {
-                            if (p instanceof Agent) {
-                                Agent agent = (Agent) p;
-                                suggestion = (agent.processSuggestion (game, suggestion));
-                                SuggestionStatus newStatus = suggestion.getStatus();
-                                if (oldStatus != newStatus && (
-                                        newStatus.equals(SuggestionStatus.ACCEPT) || newStatus.equals(SuggestionStatus.REJECT)))
-                                {
-                                    sharedBoard.makeSuggestion (game, suggestion);
-                                }
+                            Agent agent = (Agent) p;
+                            suggestion = (agent.processSuggestion (game, suggestion));
+                            SuggestionStatus newStatus = suggestion.getStatus();
+                            if (oldStatus != newStatus && (
+                                    newStatus.equals(SuggestionStatus.ACCEPT) || newStatus.equals(SuggestionStatus.REJECT)))
+                            {
+                                // Suggestions are not reentrant, so this approach should work in JEE6
+                                sharedBoard.makeSuggestion (game, suggestion);
                             }
                         }
                     }
@@ -119,9 +85,6 @@ public class AgentListener implements MessageListener {
             throw new RuntimeException (e);
         } catch (RuntimeException e) {
             logger.warning ("RuntimeException generated! " + e.getMessage());
-            e.printStackTrace();
-        } catch (InvalidMoveException e) {
-            logger.severe(e.getMessage());
             e.printStackTrace();
         } catch (InvalidSuggestionException e) {
             logger.severe(e.getMessage());
