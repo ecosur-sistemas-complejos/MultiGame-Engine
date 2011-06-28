@@ -11,7 +11,7 @@
 
 package mx.ecosur.multigame.model.interfaces;
 
-import java.util.Set;
+import java.util.List;
 
 public interface Agent extends GamePlayer {
 
@@ -19,7 +19,7 @@ public interface Agent extends GamePlayer {
 
     public boolean ready();
 
-    public Set<Move> determineMoves(Game game);
+    public List<Move> determineMoves(Game game);
 
     public Suggestion processSuggestion (Game game, Suggestion suggestion);
 }

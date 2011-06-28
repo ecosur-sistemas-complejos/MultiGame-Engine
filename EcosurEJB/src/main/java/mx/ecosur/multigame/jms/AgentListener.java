@@ -36,6 +36,7 @@ import mx.ecosur.multigame.model.interfaces.*;
 
 @RunAs("j2ee")
 @MessageDriven(mappedName = "MultiGame")
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class AgentListener implements MessageListener {
 
     @EJB
