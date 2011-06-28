@@ -20,6 +20,8 @@ import java.util.logging.Logger;
 import javax.annotation.security.RunAs;
 import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
@@ -30,6 +32,7 @@ import mx.ecosur.multigame.model.interfaces.ChatMessage;
 
 @RunAs("j2ee")
 @MessageDriven(mappedName = "MultiGame")
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class ChatListener implements MessageListener {
 
     private static final Logger logger = Logger.getLogger(ChatListener.class.getCanonicalName());

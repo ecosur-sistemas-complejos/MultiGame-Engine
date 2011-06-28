@@ -98,7 +98,7 @@ public class SharedBoard implements SharedBoardLocal, SharedBoardRemote {
            if (p instanceof Agent) {
                Agent a = (Agent) p;
                if (a.ready()) {
-                   Set<Move> moves = a.determineMoves(game);
+                   List <Move> moves = a.determineMoves(game);
                    for (Move m : moves) {
                       game.move(m);
                       if (m.getStatus() != MoveStatus.INVALID) {
