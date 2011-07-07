@@ -1,3 +1,7 @@
 /EcosurEJB/target/
 /GridCommon/target/
 /MultiGameCommon/target/
+/EcosurEJB/ecosur-ejb.iml
+/engine-module.iml
+/GridCommon/grid-common.iml
+/MultiGameCommon/multi-game-common.iml
