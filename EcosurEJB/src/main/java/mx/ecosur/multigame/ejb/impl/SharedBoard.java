@@ -84,7 +84,6 @@ public class SharedBoard implements SharedBoardLocal, SharedBoardRemote {
         /* Now that entities are managed, execute rules on move and game */
         game.setMessageSender(messageSender);
         game.move (move);
-        em.flush();
 
         if (move.getStatus().equals(MoveStatus.INVALID))
             throw new InvalidMoveException ("INVALID Move. [" + move.toString() + "]");
@@ -100,9 +99,9 @@ public class SharedBoard implements SharedBoardLocal, SharedBoardRemote {
                if (a.ready()) {
                    List <Move> moves = a.determineMoves(game);
                    for (Move m : moves) {
+                      m = em.merge(m);
                       game.move(m);
                       if (m.getStatus() != MoveStatus.INVALID) {
-                          em.flush();
                           break;
                       }
                    }
