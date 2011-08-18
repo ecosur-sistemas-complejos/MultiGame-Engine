@@ -28,7 +28,7 @@ import mx.ecosur.multigame.model.interfaces.Move;
 public class GridMove implements Move, Cloneable, Comparable {
 
     private static final long serialVersionUID = 8017901476308051472L;
-    private int id, orderId;
+    private int id;
     protected GridPlayer player;
     protected GridCell current;
     protected GridCell destination;
@@ -65,14 +65,6 @@ public class GridMove implements Move, Cloneable, Comparable {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
     }
 
     @OneToOne  (cascade={CascadeType.ALL}, fetch=FetchType.EAGER)

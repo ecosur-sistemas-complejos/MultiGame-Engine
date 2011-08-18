@@ -102,6 +102,7 @@ public class SharedBoard implements SharedBoardLocal, SharedBoardRemote {
                       m = em.merge(m);
                       game.move(m);
                       if (m.getStatus() != MoveStatus.INVALID) {
+                          em.merge(a);
                           break;
                       }
                    }
@@ -142,6 +143,10 @@ public class SharedBoard implements SharedBoardLocal, SharedBoardRemote {
      * @see mx.ecosur.multigame.ejb.interfaces.SharedBoardInterface#updateMove(mx.ecosur.multigame.entity.Move)
      */
     public Move updateMove(Move move) {
+        /* Get current state of player */
+        GamePlayer p = move.getPlayerModel();
+        p = (GamePlayer) em.find(p.getClass(), p.getId());
+        move.setPlayerModel(p);
         return em.merge(move);
     }
 }
