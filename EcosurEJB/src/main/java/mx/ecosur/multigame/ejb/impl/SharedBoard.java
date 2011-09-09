@@ -43,7 +43,7 @@ import mx.ecosur.multigame.model.interfaces.*;
 import mx.ecosur.multigame.MessageSender;
 
 @Stateless
-@RolesAllowed("admin")
+@RolesAllowed("MultiGame")
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class SharedBoard implements SharedBoardLocal, SharedBoardRemote {
 

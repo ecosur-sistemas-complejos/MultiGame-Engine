@@ -34,7 +34,7 @@ import mx.ecosur.multigame.model.interfaces.*;
 
 @SuppressWarnings({"JpaQueryApiInspection"})
 @Stateless
-@RolesAllowed("admin")
+@RolesAllowed("MultiGame")
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class Registrar implements RegistrarRemote, RegistrarLocal {
 
