@@ -5,3 +5,14 @@
 /engine-module.iml
 /GridCommon/grid-common.iml
 /MultiGameCommon/multi-game-common.iml
+/.project
+/.settings/
+/EcosurEJB/.classpath
+/EcosurEJB/.project
+/EcosurEJB/.settings/
+/GridCommon/.classpath
+/GridCommon/.project
+/GridCommon/.settings/
+/MultiGameCommon/.classpath
+/MultiGameCommon/.project
+/MultiGameCommon/.settings/
