@@ -12,5 +12,5 @@
 package mx.ecosur.multigame.enums;
 
 public enum MoveStatus {
-    INVALID, VERIFIED, UNVERIFIED, MOVED, EVALUATED
+    INVALID, VERIFIED, UNVERIFIED, MOVED, EVALUATED, CHECKCONDITION
 }
