@@ -79,7 +79,7 @@ public class SharedBoard implements SharedBoardLocal, SharedBoardRemote {
      */
     public Move doMove(Game game, Move move) throws InvalidMoveException {
         move = em.merge(move);
-        game = em.merge(game);
+        game = em.find(game.getClass(), game.getId());
 
         /* Now that entities are managed, execute rules on move and game */
         game.setMessageSender(messageSender);
