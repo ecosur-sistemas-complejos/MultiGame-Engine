@@ -259,9 +259,11 @@ public abstract class GridGame implements Game, Cloneable {
     @Transient
     protected List<Color> getAvailableColors() {
         List<Color> colors = getColors();
-        for (GamePlayer player : players) {
-            GridPlayer ep = (GridPlayer) player;
-            colors.remove(ep.getColor());
+        if (players != null) {
+            for (GamePlayer player : players) {
+                GridPlayer ep = (GridPlayer) player;
+                colors.remove(ep.getColor());
+            }
         }
 
         return colors;
