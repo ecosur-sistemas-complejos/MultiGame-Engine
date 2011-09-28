@@ -113,17 +113,19 @@ public class GameGrid implements Serializable, Cloneable {
 
     public String toString () {
         StringBuffer buf = new StringBuffer();
-        Iterator<GridCell> iter = cells.iterator();
         buf.append ("GameGrid: [");
-        while (iter.hasNext()) {
-            GridCell cell = iter.next();
-            buf.append("column: " + cell.getColumn() + ", row: " +
+        if (cells != null && cells.size() > 0) {
+            Iterator<GridCell> iter = cells.iterator();
+            while (iter.hasNext()) {
+                GridCell cell = iter.next();
+                buf.append("column: " + cell.getColumn() + ", row: " +
                             cell.getRow() + ", color: " + cell.getColor());
-            if (iter.hasNext()) {
+                if (iter.hasNext()) {
                     buf.append ("; ");
-            }
-            else {
+                }
+                else {
                     buf.append ("]");
+                }
             }
         }
 
