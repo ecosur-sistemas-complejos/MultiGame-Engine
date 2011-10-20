@@ -126,6 +126,28 @@ public class MessageSender {
     }
 
     /**
+     * Sends GameEvent.CREATE message with the newly created game
+     */
+    public void sendCreateGame (Game game) {
+        sendMessage(game.getId(), GameEvent.CREATE, game);
+    }
+
+    /**
+     * Sends GameEVent.PLAYER_JOIN when a player joins a newly created Game
+     * (not the original player that created, but true for subsequent players
+     */
+    public void sendPlayerJoin(Game game, GamePlayer player) {
+        sendMessage(game.getId(), GameEvent.PLAYER_JOIN, player);
+    }
+
+    /**
+     * Sends GameEvent.DESTROY when a game has been terminated.
+     */
+    public void sendGameDestroy (Game game) {
+        sendMessage(game.getId(), GameEvent.DESTROY, game);
+    }
+
+    /**
      * Sends GameEvent.BEGIN message with no data
      *
      * @param game
