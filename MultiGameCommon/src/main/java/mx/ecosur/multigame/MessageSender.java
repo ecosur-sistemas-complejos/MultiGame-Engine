@@ -136,8 +136,8 @@ public class MessageSender {
      * Sends GameEVent.PLAYER_JOIN when a player joins a newly created Game
      * (not the original player that created, but true for subsequent players
      */
-    public void sendPlayerJoin(Game game, GamePlayer player) {
-        sendMessage(game.getId(), GameEvent.PLAYER_JOIN, player);
+    public void sendPlayerJoin(Game game) {
+        sendMessage(game.getId(), GameEvent.PLAYER_JOIN, game);
     }
 
     /**
