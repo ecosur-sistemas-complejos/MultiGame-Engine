@@ -87,29 +87,11 @@ public class SharedBoard implements SharedBoardLocal, SharedBoardRemote {
 
         if (move.getStatus().equals(MoveStatus.INVALID))
             throw new InvalidMoveException ("INVALID Move. [" + move.toString() + "]");
+        else if (move.getStatus().equals(MoveStatus.EXPIRED))
+            throw new InvalidMoveException("EXPIRED move. [ " + move.toString() + "]");
 
-        /* Handle case of agents */
-		/* TODO: implement contract for sorted set of players */
-        List<GamePlayer> players = game.listPlayers();
-        for (int i = 0; i < players.size(); i++) {
-           GamePlayer p = players.get(i);
-           /* Spin until no more agents */
-           if (p instanceof Agent) {
-               Agent a = (Agent) p;
-               if (a.ready()) {
-                   List <Move> moves = a.determineMoves(game);
-                   for (Move m : moves) {
-                      m = em.merge(m);
-                      game.move(m);
-                      if (m.getStatus() != MoveStatus.INVALID) {
-                          em.merge(a);
-                          break;
-                      }
-                   }
-                }
-           }
-        }
-
+        em.flush();
+        messageSender.sendPlayerChange(game);
         return move;
     }
 
