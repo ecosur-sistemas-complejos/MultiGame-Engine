@@ -27,6 +27,7 @@ import mx.ecosur.multigame.ejb.interfaces.SharedBoardLocal;
 
 import mx.ecosur.multigame.enums.GameEvent;
 
+import mx.ecosur.multigame.enums.MoveStatus;
 import mx.ecosur.multigame.enums.SuggestionStatus;
 import mx.ecosur.multigame.exception.InvalidMoveException;
 
@@ -55,6 +56,31 @@ public class AgentListener implements MessageListener {
             String gameEvent = message.getStringProperty("GAME_EVENT");
             GameEvent event = GameEvent.valueOf(gameEvent);
             ObjectMessage msg = (ObjectMessage) message;
+            if (event.equals(GameEvent.PLAYER_CHANGE)) {
+                matched = true;
+                Game game = (Game) msg.getObject();
+                List<GamePlayer> players = game.listPlayers();
+                Agent agent = null;
+                for (GamePlayer p : players) {
+                    if (p instanceof Agent) {
+                        Agent a = (Agent) p;
+                        if (a.ready()) {
+                            agent = a;
+                            break;
+                        }
+                    }
+                }
+
+                if (agent != null) {
+                    List<Move> moves = agent.determineMoves(game);
+                    if (moves.isEmpty())
+                        throw new RuntimeException ("Agent unable to find move!");
+                    Move move = moves.get(0);
+                    move.setPlayerModel(agent);
+                    moved = sharedBoard.doMove(game, move);
+                }
+            }
+
 
             for (GameEvent possible : suggestionEvents) {
                 if (event.equals(possible)) {
@@ -72,7 +98,6 @@ public class AgentListener implements MessageListener {
                             if (oldStatus != newStatus && (
                                     newStatus.equals(SuggestionStatus.ACCEPT) || newStatus.equals(SuggestionStatus.REJECT)))
                             {
-                                // Suggestions are not reentrant, so this approach should work in JEE6
                                 sharedBoard.makeSuggestion (game, suggestion);
                             }
                         }
@@ -90,6 +115,8 @@ public class AgentListener implements MessageListener {
         } catch (InvalidSuggestionException e) {
             logger.severe(e.getMessage());
             e.printStackTrace();
+        } catch (InvalidMoveException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 }
