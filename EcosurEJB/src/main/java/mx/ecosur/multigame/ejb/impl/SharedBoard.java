@@ -20,8 +20,6 @@
 package mx.ecosur.multigame.ejb.impl;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.annotation.security.RolesAllowed;
