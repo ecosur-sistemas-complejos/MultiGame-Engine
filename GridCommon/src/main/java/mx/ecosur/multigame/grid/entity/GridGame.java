@@ -175,7 +175,7 @@ public abstract class GridGame implements Game, Cloneable {
     /**
      * @return the creation date of this game
      */
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     public Date getCreated() {
         return created;
     }
