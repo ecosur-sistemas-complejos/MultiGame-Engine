@@ -75,9 +75,17 @@ public class AgentListener implements MessageListener {
                     List<Move> moves = agent.determineMoves(game);
                     if (moves.isEmpty())
                         throw new RuntimeException ("Agent unable to find move!");
-                    Move move = moves.get(0);
-                    move.setPlayerModel(agent);
-                    moved = sharedBoard.doMove(game, move);
+                    for (Move move : moves) {
+                        move.setPlayerModel(agent);
+                        try {
+                            moved = sharedBoard.doMove(game, move);
+                        } catch (InvalidMoveException e) {
+                            /* If an invalid move exception is thrown we try the next move in the stack */
+                            continue;
+                        }
+                        /* Break out of the loop and continue, move was okay */
+                        break;
+                    }
                 }
             }
 
@@ -115,8 +123,6 @@ public class AgentListener implements MessageListener {
         } catch (InvalidSuggestionException e) {
             logger.severe(e.getMessage());
             e.printStackTrace();
-        } catch (InvalidMoveException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 }
