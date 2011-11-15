@@ -75,17 +75,9 @@ public class AgentListener implements MessageListener {
                     List<Move> moves = agent.determineMoves(game);
                     if (moves.isEmpty())
                         throw new RuntimeException ("Agent unable to find move!");
-                    for (Move move : moves) {
-                        move.setPlayerModel(agent);
-                        try {
-                            moved = sharedBoard.doMove(game, move);
-                        } catch (InvalidMoveException e) {
-                            /* If an invalid move exception is thrown we try the next move in the stack */
-                            continue;
-                        }
-                        /* Break out of the loop and continue, move was okay */
-                        break;
-                    }
+                    Move move = moves.get(0);
+                    move.setPlayerModel(agent);
+                    moved = sharedBoard.doMove(game, move);
                 }
             }
 
@@ -114,15 +106,13 @@ public class AgentListener implements MessageListener {
             }
 
         } catch (JMSException e) {
-            logger.warning("Not able to process game message: " + e.getMessage());
-            e.printStackTrace();
+            logger.severe("Unable to process game message: " + e.getMessage());
             throw new RuntimeException (e);
-        } catch (RuntimeException e) {
-            logger.warning ("RuntimeException generated! " + e.getMessage());
-            e.printStackTrace();
         } catch (InvalidSuggestionException e) {
             logger.severe(e.getMessage());
-            e.printStackTrace();
+        } catch (InvalidMoveException e) {
+            logger.severe(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 }

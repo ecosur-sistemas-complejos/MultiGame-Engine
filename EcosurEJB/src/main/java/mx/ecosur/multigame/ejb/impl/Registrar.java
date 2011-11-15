@@ -111,11 +111,12 @@ public class Registrar implements RegistrarRemote, RegistrarLocal {
     }
 
     public Game unregister(Game game, GamePlayer player) throws InvalidRegistrationException {
-        player = em.merge(player);
         game = em.find(game.getClass(), game.getId());
+        player = em.merge(player);
+        /* Modify game state */
         game.removePlayer(player);
         game.setState(GameState.ENDED);
-        em.flush();
+        /* Message change */
         messageSender.sendPlayerChange(game);
         return game;
     }

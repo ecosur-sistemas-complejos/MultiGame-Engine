@@ -89,7 +89,8 @@ public class SharedBoard implements SharedBoardLocal, SharedBoardRemote {
             throw new InvalidMoveException("EXPIRED move. [ " + move.toString() + "]");
 
         em.flush();
-        messageSender.sendPlayerChange(game);
+        if (move.getStatus() != MoveStatus.INVALID)
+            messageSender.sendPlayerChange(game);
         return move;
     }
 
