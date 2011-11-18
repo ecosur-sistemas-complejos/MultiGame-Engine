@@ -116,6 +116,7 @@ public class Registrar implements RegistrarRemote, RegistrarLocal {
         /* Modify game state */
         game.removePlayer(player);
         game.setState(GameState.ENDED);
+        em.flush();
         /* Message change */
         messageSender.sendPlayerChange(game);
         return game;
@@ -129,7 +130,6 @@ public class Registrar implements RegistrarRemote, RegistrarLocal {
         Query query = em.createNamedQuery("GridGame.GetCurrentGames");
         query.setParameter("registrant", player.getName());
         query.setParameter("state", GameState.ENDED);
-        query.setLockMode(LockModeType.PESSIMISTIC_READ);
         List<Game> games = query.getResultList();
         for (Game game : games) {
             ret.add(game);
@@ -146,7 +146,6 @@ public class Registrar implements RegistrarRemote, RegistrarLocal {
         Query query = em.createNamedQuery("GridGame.GetAvailableGames");
         query.setParameter("registrant", player.getName());
         query.setParameter("state", GameState.WAITING);
-        query.setLockMode(LockModeType.PESSIMISTIC_READ);
         List<Game> games = query.getResultList();
 
         for (Game impl : games) {

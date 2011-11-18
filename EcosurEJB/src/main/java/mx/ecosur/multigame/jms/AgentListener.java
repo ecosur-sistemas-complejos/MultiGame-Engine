@@ -23,6 +23,7 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
+import mx.ecosur.multigame.MessageSender;
 import mx.ecosur.multigame.ejb.interfaces.SharedBoardLocal;
 
 import mx.ecosur.multigame.enums.GameEvent;
@@ -50,14 +51,11 @@ public class AgentListener implements MessageListener {
     private static final long serialVersionUID = -312450142866686545L;
 
     public void onMessage(Message message) {
-        boolean matched = false;
-        Move moved = null;
         try {
             String gameEvent = message.getStringProperty("GAME_EVENT");
             GameEvent event = GameEvent.valueOf(gameEvent);
             ObjectMessage msg = (ObjectMessage) message;
             if (event.equals(GameEvent.PLAYER_CHANGE)) {
-                matched = true;
                 Game game = (Game) msg.getObject();
                 List<GamePlayer> players = game.listPlayers();
                 Agent agent = null;
@@ -73,18 +71,19 @@ public class AgentListener implements MessageListener {
 
                 if (agent != null) {
                     List<Move> moves = agent.determineMoves(game);
-                    if (moves.isEmpty())
-                        throw new RuntimeException ("Agent unable to find move!");
-                    Move move = moves.get(0);
-                    move.setPlayerModel(agent);
-                    moved = sharedBoard.doMove(game, move);
+                    if (!moves.isEmpty()) {
+                        Move move = moves.get(0);
+                        move.setPlayerModel(agent);
+                        sharedBoard.doMove(game, move);
+                    } else {
+                        logger.warning("No moves suggested by Agent: " + agent.getName());
+                    }
                 }
             }
 
 
             for (GameEvent possible : suggestionEvents) {
                 if (event.equals(possible)) {
-                    matched = true;
                     Suggestion suggestion = (Suggestion) msg.getObject();
                     SuggestionStatus oldStatus = suggestion.getStatus();
                     int gameId = new Integer (message.getStringProperty("GAME_ID")).intValue();
@@ -109,9 +108,9 @@ public class AgentListener implements MessageListener {
             logger.severe("Unable to process game message: " + e.getMessage());
             throw new RuntimeException (e);
         } catch (InvalidSuggestionException e) {
-            logger.severe(e.getMessage());
+            logger.severe("IVSE: " + e.getMessage());
         } catch (InvalidMoveException e) {
-            logger.severe(e.getMessage());
+            logger.severe("IVME: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
