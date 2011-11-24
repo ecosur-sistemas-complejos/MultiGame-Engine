@@ -11,6 +11,7 @@
 
 package mx.ecosur.multigame.jms;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -18,10 +19,7 @@ import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.annotation.security.RunAs;
 import javax.ejb.*;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.ObjectMessage;
+import javax.jms.*;
 
 import mx.ecosur.multigame.MessageSender;
 import mx.ecosur.multigame.ejb.interfaces.SharedBoardLocal;
@@ -71,13 +69,21 @@ public class AgentListener implements MessageListener {
 
                 if (agent != null) {
                     List<Move> moves = agent.determineMoves(game);
-                    if (!moves.isEmpty()) {
-                        Move move = moves.get(0);
-                        move.setPlayerModel(agent);
-                        sharedBoard.doMove(game, move);
-                    } else {
-                        logger.warning("No moves suggested by Agent: " + agent.getName());
+                    for (Move m : moves) {
+                        m.setPlayerModel(agent);
+                        try {
+                            sharedBoard.doMove(game, m);
+                        } catch (InvalidMoveException e) {
+                            logger.warning ("InvalidMove: " + e.getLocalizedMessage() + ". Out of " + moves.size() +
+                                    " proposed.")  ;
+                            continue;
+                        }
+                        if (m.getStatus() != MoveStatus.INVALID)
+                            break;
                     }
+
+                    if (moves == Collections.EMPTY_LIST || moves.size() == 0)
+                        throw new RuntimeException("Agent [" + agent.getName() + "] suggested no moves!");
                 }
             }
 
@@ -106,12 +112,10 @@ public class AgentListener implements MessageListener {
 
         } catch (JMSException e) {
             logger.severe("Unable to process game message: " + e.getMessage());
-            throw new RuntimeException (e);
+            throw new RuntimeException(e.getLocalizedMessage(), e);
         } catch (InvalidSuggestionException e) {
-            logger.severe("IVSE: " + e.getMessage());
-        } catch (InvalidMoveException e) {
-            logger.severe("IVME: " + e.getMessage());
-            throw new RuntimeException(e);
+            logger.severe("InvalidSuggestion: " + e.getMessage());
+            throw new RuntimeException(e.getLocalizedMessage(), e);
         }
     }
 }
