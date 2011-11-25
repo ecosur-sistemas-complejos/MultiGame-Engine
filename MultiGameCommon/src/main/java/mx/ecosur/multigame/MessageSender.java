@@ -38,23 +38,43 @@ public class MessageSender {
 
     private static Logger logger = Logger.getLogger(MessageSender.class.getCanonicalName());
 
-    private static final String CONNECTION_FACTORY_JNDI_NAME = "MultiGameConnectionFactory";
+    protected static final String CONNECTION_FACTORY_JNDI_NAME = "MultiGameConnectionFactory";
 
     private static final String TOPIC_JNDI_NAME = "MultiGame";
 
     @Resource(mappedName = CONNECTION_FACTORY_JNDI_NAME)
     protected ConnectionFactory connectionFactory;
 
-    @Resource (mappedName = TOPIC_JNDI_NAME)
-    protected Topic topic;
+    private String topicName;
+
+    private Topic topic;
 
     private static Map<Integer, Long> msgIdCount = new HashMap<Integer, Long>();
 
-    /**
-     * Default constructor initializes connection factory and topic
-     */
     public MessageSender() {
-            super();
+        super();
+        this.topicName = TOPIC_JNDI_NAME;
+    }
+
+    public MessageSender (String topicName) {
+        this();
+        this.topicName = topicName;
+    }
+
+    public MessageSender (Context context, String topicName) {
+        this (topicName);
+
+        try {
+            if (connectionFactory == null)
+                connectionFactory = (ConnectionFactory) context.lookup(CONNECTION_FACTORY_JNDI_NAME);
+            if (topic == null)
+                topic = (Topic) context.lookup(topicName);
+        } catch (NamingException e) {
+                logger.severe("Not able to get JMS connection and topic from "
+                    + "connection factory " + CONNECTION_FACTORY_JNDI_NAME
+                    + " and topic " + topic);
+            e.printStackTrace();
+        }
     }
 
     public void initialize() {
@@ -65,29 +85,15 @@ public class MessageSender {
                 ic = new InitialContext();
                 if (connectionFactory == null)
                     connectionFactory = (ConnectionFactory) ic
-                        .lookup(CONNECTION_FACTORY_JNDI_NAME);
+                            .lookup(CONNECTION_FACTORY_JNDI_NAME);
                 if (topic == null)
-                    topic = (Topic) ic.lookup(TOPIC_JNDI_NAME);
+                    topic = (Topic) ic.lookup(topicName);
             } catch (Exception e) {
                 logger.severe("Unable to get JMS connection and topic from "
-                    + "connection factory " + CONNECTION_FACTORY_JNDI_NAME
-                    + " and topic " + TOPIC_JNDI_NAME);
+                        + "connection factory " + CONNECTION_FACTORY_JNDI_NAME
+                        + " and topic " + topicName);
                 e.printStackTrace();
             }
-        }
-    }
-
-    public MessageSender (Context context) {
-        try {
-            if (connectionFactory == null)
-                connectionFactory = (ConnectionFactory) context.lookup(CONNECTION_FACTORY_JNDI_NAME);
-            if (topic == null)
-                topic = (Topic) context.lookup(TOPIC_JNDI_NAME);
-        } catch (NamingException e) {
-                logger.severe("Not able to get JMS connection and topic from "
-                    + "connection factory " + CONNECTION_FACTORY_JNDI_NAME
-                    + " and topic " + TOPIC_JNDI_NAME);
-            e.printStackTrace();
         }
     }
 
