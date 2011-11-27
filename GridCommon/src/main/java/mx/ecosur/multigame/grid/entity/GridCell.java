@@ -110,8 +110,9 @@ public class GridCell implements Cell, Cloneable {
         boolean ret = false;
         if (obj instanceof GridCell && obj != null) {
             GridCell comparison = (GridCell) obj;
-            if (comparison.getColumn() == this.getColumn() && comparison.getRow() == this.getRow())
-                ret = true;
+            if (comparator.compare(this, comparison) == 0 &&
+                   comparison.getColor().equals(this.getColor()))
+                        ret = true;
         }
 
         return ret;
