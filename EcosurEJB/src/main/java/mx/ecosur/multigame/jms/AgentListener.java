@@ -83,7 +83,7 @@ public class AgentListener implements MessageListener {
                     }
 
                     if (moves == Collections.EMPTY_LIST || moves.size() == 0)
-                        throw new RuntimeException("Agent [" + agent.getName() + "] suggested no moves!");
+                        logger.severe("Agent [" + agent.getName() + "] suggested no moves!")  ;
                 }
             }
 
@@ -112,10 +112,8 @@ public class AgentListener implements MessageListener {
 
         } catch (JMSException e) {
             logger.severe("Unable to process game message: " + e.getMessage());
-            throw new RuntimeException(e.getLocalizedMessage(), e);
         } catch (InvalidSuggestionException e) {
             logger.severe("InvalidSuggestion: " + e.getMessage());
-            throw new RuntimeException(e.getLocalizedMessage(), e);
         }
     }
 }

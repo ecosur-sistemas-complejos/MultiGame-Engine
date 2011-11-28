@@ -57,7 +57,6 @@ public class ChatListener implements MessageListener {
             }
         } catch (Exception e) {
             logger.warning("Not able to save game message: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 }
