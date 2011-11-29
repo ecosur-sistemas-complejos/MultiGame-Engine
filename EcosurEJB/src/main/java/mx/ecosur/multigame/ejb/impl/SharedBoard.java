@@ -82,13 +82,13 @@ public class SharedBoard implements SharedBoardLocal, SharedBoardRemote {
         /* Now that entities are managed, execute rules on move and game */
         game.setMessageSender(messageSender);
         game.move (move);
-
+        em.flush();
         if (move.getStatus().equals(MoveStatus.INVALID))
             throw new InvalidMoveException ("INVALID Move. [" + move.toString() + "]");
         else if (move.getStatus().equals(MoveStatus.EXPIRED))
             throw new InvalidMoveException("EXPIRED move. [ " + move.toString() + "]");
 
-        em.flush();
+        /* Good move? Message downstream players */
         if (move.getStatus() != MoveStatus.INVALID)
             messageSender.sendPlayerChange(game);
         return move;
@@ -103,6 +103,7 @@ public class SharedBoard implements SharedBoardLocal, SharedBoardRemote {
         game = em.find(game.getClass(), game.getId());
         game.setMessageSender(messageSender);
         suggestion = game.suggest(suggestion);
+        em.flush();
         if (suggestion.getStatus().equals(SuggestionStatus.INVALID))
             throw new InvalidSuggestionException ("INVALID Move suggested!");
         return suggestion;
