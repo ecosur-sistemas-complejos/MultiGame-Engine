@@ -38,8 +38,6 @@ import mx.ecosur.multigame.model.interfaces.*;
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class Registrar implements RegistrarRemote, RegistrarLocal {
 
-    private MessageSender messageSender;
-
     @PersistenceContext (unitName = "MultiGamePU")
     EntityManager em;
 
@@ -50,8 +48,6 @@ public class Registrar implements RegistrarRemote, RegistrarLocal {
             ClassNotFoundException
     {
         super();
-        messageSender = new MessageSender();
-        messageSender.initialize();
     }
 
     /* (non-Javadoc)
@@ -83,12 +79,11 @@ public class Registrar implements RegistrarRemote, RegistrarLocal {
             em.persist(game);
         else
             game = em.find(game.getClass(), game.getId());
-        game.setMessageSender(messageSender);
         registrant = em.merge(registrant);
         registrant.setLastRegistration(System.currentTimeMillis());
         game.registerPlayer (registrant);
         em.flush();
-        messageSender.sendPlayerChange(game);
+        game.getMessageSender().sendPlayerChange(game);
         return game;
     }
 
@@ -103,10 +98,9 @@ public class Registrar implements RegistrarRemote, RegistrarLocal {
             em.persist(game);
         else
             game = em.find(game.getClass(), game.getId());
-        game.setMessageSender(messageSender);
         game.registerAgent (agent);
         em.flush();
-        messageSender.sendPlayerChange(game);
+        game.getMessageSender().sendPlayerChange(game);
         return game;
     }
 
@@ -118,7 +112,7 @@ public class Registrar implements RegistrarRemote, RegistrarLocal {
         game.setState(GameState.ENDED);
         em.flush();
         /* Message change */
-        messageSender.sendPlayerChange(game);
+        game.getMessageSender().sendPlayerChange(game);
         return game;
     }
 
