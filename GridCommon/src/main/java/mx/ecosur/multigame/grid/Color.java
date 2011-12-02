@@ -16,6 +16,8 @@ package mx.ecosur.multigame.grid;
 public enum Color {
     YELLOW, BLUE, PURPLE, RED, GREEN, BLACK, UNKNOWN;
 
+    public static final Color[] playable = { YELLOW, BLUE, PURPLE, RED, GREEN, BLACK };
+
     public Color getCompliment() {
         Color ret;
 
@@ -74,10 +76,5 @@ public enum Color {
                 ret = "U";
         }
         return ret;
-    }
-
-    public static Color[] playable() {
-            Color[] ret = { YELLOW, BLUE, PURPLE, RED, GREEN, BLACK};
-            return ret;
     }
 }

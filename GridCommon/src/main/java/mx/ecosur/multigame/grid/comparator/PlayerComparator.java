@@ -20,7 +20,7 @@ public class PlayerComparator implements Comparator<GridPlayer>, Serializable {
     public int compare(GridPlayer a, GridPlayer b) {
         int ret = 0;
         if (!a.getColor().equals(b.getColor())) {
-            Color [] p = Color.playable();
+            Color [] p = Color.playable;
             int pos1 = -1, pos2 = -1;
             for (int i = 0; i < p.length; i++) {
                 if (p [ i ].equals(a.getColor()))
