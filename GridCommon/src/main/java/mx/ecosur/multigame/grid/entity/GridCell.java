@@ -35,12 +35,10 @@ public class GridCell implements Cell, Cloneable {
 
     private Color color;
 
-    private CellComparator comparator;
-
     protected int id;
 
     public GridCell() {
-            this.comparator = new CellComparator();
+        super();
     }
 
     /*
@@ -48,10 +46,9 @@ public class GridCell implements Cell, Cloneable {
      * Color
      */
     public GridCell(int column, int row, Color color) {
-            this.column = column;
-            this.row = row;
-            this.color = color;
-            this.comparator = new CellComparator();
+        this.column = column;
+        this.row = row;
+        this.color = color;
     }
 
     @Id
@@ -102,17 +99,15 @@ public class GridCell implements Cell, Cloneable {
 
     public String toString() {
         return "(Column, Row) Column = " + column + ", Row = " + row +
-            ", Color = " + color  + ", comparator = " + comparator;
+            ", Color = " + color;
     }
 
     @Override
     public boolean equals(Object obj) {
         boolean ret = false;
         if (obj instanceof GridCell && obj != null) {
-            GridCell comparison = (GridCell) obj;
-            if (comparator.compare(this, comparison) == 0 &&
-                   comparison.getColor().equals(this.getColor()))
-                        ret = true;
+            GridCell c = (GridCell) obj;
+            ret = getRow() == c.getRow() && getColumn() == c.getColumn() && getColor().equals(c.getColor());
         }
 
         return ret;

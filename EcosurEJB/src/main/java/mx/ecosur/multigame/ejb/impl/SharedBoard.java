@@ -52,8 +52,6 @@ public class SharedBoard implements SharedBoardLocal, SharedBoardRemote {
         logger = Logger.getLogger(SharedBoard.class.getCanonicalName());
     }
 
-    private MessageSender messageSender;
-        
     @PersistenceContext (unitName = "MultiGamePU")
     EntityManager em;
 
@@ -61,8 +59,6 @@ public class SharedBoard implements SharedBoardLocal, SharedBoardRemote {
             ClassNotFoundException
     {
         super();
-        messageSender = new MessageSender();
-        messageSender.initialize();
     }
 
     /* (non-Javadoc)
@@ -80,7 +76,6 @@ public class SharedBoard implements SharedBoardLocal, SharedBoardRemote {
         game = em.find(game.getClass(), game.getId());
 
         /* Now that entities are managed, execute rules on move and game */
-        game.setMessageSender(messageSender);
         game.move (move);
         em.flush();
         if (move.getStatus().equals(MoveStatus.INVALID))
@@ -90,7 +85,7 @@ public class SharedBoard implements SharedBoardLocal, SharedBoardRemote {
 
         /* Good move? Message downstream players */
         if (move.getStatus() != MoveStatus.INVALID)
-            messageSender.sendPlayerChange(game);
+            game.getMessageSender().sendPlayerChange(game);
         return move;
     }
 
@@ -101,7 +96,6 @@ public class SharedBoard implements SharedBoardLocal, SharedBoardRemote {
         /* Move must be reattached as em removes it from the suggestion after the merge */
         suggestion.attachMove(move);
         game = em.find(game.getClass(), game.getId());
-        game.setMessageSender(messageSender);
         suggestion = game.suggest(suggestion);
         em.flush();
         if (suggestion.getStatus().equals(SuggestionStatus.INVALID))
