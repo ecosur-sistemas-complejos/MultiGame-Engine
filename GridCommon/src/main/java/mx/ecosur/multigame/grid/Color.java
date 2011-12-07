@@ -13,10 +13,20 @@
 
 package mx.ecosur.multigame.grid;
 
+import sun.font.TrueTypeFont;
+
 public enum Color {
     YELLOW, BLUE, PURPLE, RED, GREEN, BLACK, UNKNOWN;
 
-    public static final Color[] playable = { YELLOW, BLUE, PURPLE, RED, GREEN, BLACK };
+    public boolean playable() {
+        switch (this) {
+            case UNKNOWN:
+                return false;
+            default:
+                return true;
+        }
+    }
+
 
     public Color getCompliment() {
         Color ret;

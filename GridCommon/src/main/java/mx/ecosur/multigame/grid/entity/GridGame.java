@@ -294,10 +294,6 @@ public abstract class GridGame implements Game, Cloneable {
         return move;
     }
 
-    public void setKbase(KnowledgeBase kbase) {
-        this.kbase = kbase;
-    }
-
     @Transient
     public int getMaxPlayers() {
         return 0;  //To change body of implemented methods use File | Settings | File Templates.

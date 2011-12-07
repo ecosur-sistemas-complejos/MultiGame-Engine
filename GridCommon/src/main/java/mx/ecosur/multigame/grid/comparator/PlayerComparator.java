@@ -15,29 +15,9 @@ import java.util.Comparator;
  */
 public class PlayerComparator implements Comparator<GridPlayer>, Serializable {
 
-
     @Override
     public int compare(GridPlayer a, GridPlayer b) {
-        int ret = 0;
-        if (!a.getColor().equals(b.getColor())) {
-            Color [] p = Color.playable;
-            int pos1 = -1, pos2 = -1;
-            for (int i = 0; i < p.length; i++) {
-                if (p [ i ].equals(a.getColor()))
-                    pos1 = i;
-                else if (p [ i ].equals(b.getColor()))
-                    pos2 = i;
-            }
-
-            if (pos1 == -1 || pos2 == -1)
-                throw new RuntimeException ("Unable to perform Color Comparison!");
-
-            if (pos1 > pos2) {
-                ret = 1;
-            } else if (pos1 < pos2)
-                ret = -1;
-        }
-
-        return ret;
+        // Color order is based on natural numbering of Color enum
+        return (a.getColor().compareTo(b.getColor()));
     }
 }
