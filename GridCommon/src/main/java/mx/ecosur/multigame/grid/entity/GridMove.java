@@ -146,7 +146,27 @@ public class GridMove implements Move, Cloneable, Comparable {
 
     @Override
     public int compareTo(Object o) {
-        MoveComparator m = new MoveComparator();
-        return m.compare(this, (GridMove) o);
+        if (o instanceof GridMove) {
+            GridMove contrast = (GridMove) o;
+            if (contrast.getId() > getId())
+                return 1;
+            else if (contrast.getId() < getId())
+                return -1;
+            else
+                return 0;
+        } else {
+            return -1;
+        }
+
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();    //To change body of overridden methods use File | Settings | File Templates.
     }
 }

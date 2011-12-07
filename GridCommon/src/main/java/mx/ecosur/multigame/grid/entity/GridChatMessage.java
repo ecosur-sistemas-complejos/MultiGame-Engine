@@ -54,11 +54,11 @@ public class GridChatMessage implements ChatMessage {
 
     @Temporal(TemporalType.DATE)
     public Date getDateSent() {
-        return dateSent;
+        return new Date(dateSent.getTime());
     }
 
     public void setDateSent(Date dateSent) {
-        this.dateSent = dateSent;
+        this.dateSent = new Date(dateSent.getTime());
     }
 
     @Basic

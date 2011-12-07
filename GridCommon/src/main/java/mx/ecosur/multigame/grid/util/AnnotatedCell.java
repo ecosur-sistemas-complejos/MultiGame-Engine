@@ -60,7 +60,7 @@ public class AnnotatedCell {
             return super.equals(obj);
     }
 
-@Override
+    @Override
     public int hashCode() {
         return new HashCodeBuilder().append(cell).append(direction).hashCode();
     }
