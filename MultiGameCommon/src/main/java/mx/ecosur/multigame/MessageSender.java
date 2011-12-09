@@ -183,38 +183,6 @@ public class MessageSender {
     }
 
     /**
-    * Sends the GameEvent.CONDITION_RAISED message with the raised condition.
-    *
-    * @param  game
-    * @param condition
-    */
-    public void sendConditionRaised (Game game, Condition condition) {
-        sendMessage(game.getId(), GameEvent.CONDITION_RAISED, condition);
-    }
-
-    /**
-    * Sends  the GameEvent.CHECK_CONSTRAINT_RESOLVED message with the
-    * resolved condition.
-    *
-    * @param game
-    * @param condition
-    */
-    public void sendConditionResolved (Game game, Condition condition) {
-        sendMessage (game.getId(), GameEvent.CONDITION_RESOLVED, condition);
-    }
-
-    /**
-    * Sends the GameEvent.CONDITION_TRIGGERED message with the triggered
-    * condition.
-    *
-    * @param game
-    * @param condition
-    */
-    public void sendConditionTriggered (Game game, Condition condition) {
-        sendMessage (game.getId(), GameEvent.CONDITION_TRIGGERED, condition);
-    }
-
-    /**
      * Sends the GameEvent.STATE_CHANGE message with the game object.
      */
     public void sendStateChange (Game game) {
