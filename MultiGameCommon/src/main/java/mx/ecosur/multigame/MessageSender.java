@@ -117,8 +117,7 @@ public class MessageSender {
             session.close();
             connection.close();
         } catch (JMSException e) {
-            logger.severe("Not able to send message");
-            e.printStackTrace();
+            logger.severe("Not able to send message for event: " + gameEvent + " with body: [" + body + "]");
         }
     }
         
