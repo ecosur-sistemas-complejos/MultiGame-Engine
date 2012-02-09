@@ -12,6 +12,7 @@
 package mx.ecosur.multigame.model.interfaces;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -24,6 +25,10 @@ import mx.ecosur.multigame.MessageSender;
 public interface Game extends Serializable {
 
     public int getId();
+    
+    public Date getCreated();
+    
+    public String getGameType();
 
     public GamePlayer registerPlayer(Registrant registrant) throws InvalidRegistrationException;
 
@@ -49,5 +54,4 @@ public interface Game extends Serializable {
 
     public Agent registerAgent(Agent implementation) throws InvalidRegistrationException;
 
-    public String getChangeSet();
 }

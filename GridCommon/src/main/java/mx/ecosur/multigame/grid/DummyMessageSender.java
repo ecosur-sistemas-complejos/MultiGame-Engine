@@ -16,6 +16,7 @@ package mx.ecosur.multigame.grid;
 import java.io.Serializable;
 
 import mx.ecosur.multigame.MessageSender;
+import mx.ecosur.multigame.enums.Event;
 import mx.ecosur.multigame.enums.GameEvent;
 
 /**
@@ -29,7 +30,7 @@ public class DummyMessageSender extends MessageSender {
     }
 
     @Override
-    public void sendMessage(int gameId, GameEvent gameEvent, Serializable body) {
+    public void sendMessage(int gameId, Event gameEvent, Serializable body) {
        // do nothing
     }
 }
