@@ -31,7 +31,10 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import mx.ecosur.multigame.dao.GameDAO;
+import mx.ecosur.multigame.enums.Event;
 import mx.ecosur.multigame.enums.GameEvent;
+import mx.ecosur.multigame.enums.NotificationEvent;
 import mx.ecosur.multigame.model.interfaces.*;
 
 public class MessageSender {
@@ -97,7 +100,7 @@ public class MessageSender {
         }
     }
 
-    public void sendMessage(int gameId, GameEvent gameEvent, Serializable body)
+    public void sendMessage(int id, Event event, Serializable body)
     {
         if (connectionFactory == null)
             initialize();
@@ -107,20 +110,31 @@ public class MessageSender {
                             Session.AUTO_ACKNOWLEDGE);
             MessageProducer producer = session.createProducer(topic);
             ObjectMessage message = session.createObjectMessage();
-            message.setIntProperty("GAME_ID", gameId);
-            message.setStringProperty("GAME_EVENT", gameEvent.toString());
-            message.setLongProperty("MESSAGE_ID", getNextMessageId(gameId));
+
+            /* Some awkward processing, to pay for the openness of the signature */
+            if (event instanceof GameEvent) {
+                message.setIntProperty("GAME_ID", id);
+                message.setStringProperty("GAME_EVENT", event.toString());
+            } else if (event instanceof NotificationEvent) {
+                message.setIntProperty("NOTIFICATION_ID", id);
+                message.setStringProperty("NOTIFICATION_EVENT", event.toString());
+            }
+
+            /* Complete the message and send */
+            message.setLongProperty("MESSAGE_ID", getNextMessageId(id));
             if (body != null) {
                     message.setObject(body);
             }
+
             producer.send(message);
             session.close();
             connection.close();
+
         } catch (JMSException e) {
-            logger.severe("Not able to send message for event: " + gameEvent + " with body: [" + body + "]");
+            logger.severe("Not able to send message for event: " + event + " with body: [" + body + "]");
         }
     }
-        
+    
     protected long getNextMessageId(int gameId){
         if (msgIdCount.containsKey(gameId)){
             msgIdCount.put(gameId, msgIdCount.get(gameId) + 1);
@@ -135,6 +149,7 @@ public class MessageSender {
      */
     public void sendCreateGame (Game game) {
         sendMessage(game.getId(), GameEvent.CREATE, game);
+        sendMessage(game.getId(), NotificationEvent.CREATE, new GameDAO(game));
     }
 
     /**
@@ -143,6 +158,7 @@ public class MessageSender {
      */
     public void sendPlayerJoin(Game game) {
         sendMessage(game.getId(), GameEvent.PLAYER_JOIN, game);
+        sendMessage(game.getId(), NotificationEvent.JOIN, new GameDAO(game));
     }
 
     /**
@@ -150,6 +166,7 @@ public class MessageSender {
      */
     public void sendGameDestroy (Game game) {
         sendMessage(game.getId(), GameEvent.DESTROY, game);
+        sendMessage(game.getId(), NotificationEvent.DESTROY, new GameDAO(game));
     }
 
     /**
