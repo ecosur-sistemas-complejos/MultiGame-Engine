@@ -19,4 +19,6 @@ public interface Registrant extends Serializable {
     public void setLastRegistration(long currentTimeMillis);
 
     public String getName();
+
+    public void setName(String name);
 }

@@ -67,7 +67,7 @@ public class GridMove implements Move, Cloneable, Comparable {
         this.id = id;
     }
 
-    @OneToOne  (cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    @ManyToOne  (cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     public GridCell getDestinationCell() {
         return this.destination;
     }
@@ -76,7 +76,7 @@ public class GridMove implements Move, Cloneable, Comparable {
         this.destination = destination;
     }
 
-    @OneToOne  (cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    @ManyToOne  (cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     public GridCell getCurrentCell() {
         return this.current;
     }
@@ -85,7 +85,7 @@ public class GridMove implements Move, Cloneable, Comparable {
         this.current = current;
     }
 
-    @OneToOne  (cascade={CascadeType.ALL},fetch=FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL)
     public GridPlayer getPlayer() {
         return this.player;
     }
