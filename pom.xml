@@ -10,8 +10,10 @@
     </parent>     
     <groupId>mx.ecosur</groupId>
     <artifactId>engine-module</artifactId>
-    <packaging>pom</packaging>      
-    <profiles>
+    <packaging>pom</packaging>
+    <scm>
+        <connection>scm:git:file://localhost/Users/awaterma/repository/multigame.super/engine</connection>
+    </scm>    <profiles>
         <profile>
             <id>default</id>
             <activation>
