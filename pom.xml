@@ -4,14 +4,14 @@
     <parent>
         <groupId>mx.ecosur</groupId>    
         <artifactId>multi-game</artifactId>
-        <version>2.1.2-SNAPSHOT</version>
+        <version>2.1.2</version>
     </parent>     
     <groupId>mx.ecosur</groupId>
     <artifactId>engine-module</artifactId>
     <packaging>pom</packaging>
     <scm>
         <connection>scm:git:file://localhost/Users/awaterma/repository/multigame.super/engine</connection>
-      <tag>2.1.2-SNAPSHOT</tag>
+      <tag>multi-game-2.1.2</tag>
   </scm>    <profiles>
         <profile>
             <id>default</id>
