@@ -86,20 +86,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-annotations</artifactId>
-            <version>${hibernate-version}</version>
-            <!--scope>provided</scope-->
-            <exclusions>
-                <exclusion>
-                  <groupId>org.antlr</groupId>
-                  <artifactId>antlr</artifactId>
-                </exclusion>
-                <exclusion>
-                  <groupId>org.antlr</groupId>
-                  <artifactId>antlr-runtime</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.0-api</artifactId>
+            <version>1.0.0.Final</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

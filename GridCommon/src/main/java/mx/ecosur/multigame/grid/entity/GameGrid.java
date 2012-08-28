@@ -24,7 +24,6 @@ import java.util.*;
 import javax.persistence.*;
 
 import mx.ecosur.multigame.grid.comparator.CellComparator;
-import org.hibernate.annotations.Sort;
 
 @Entity
 public class GameGrid implements Serializable, Cloneable {
@@ -102,7 +101,7 @@ public class GameGrid implements Serializable, Cloneable {
     }
 
     @OneToMany (cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
-    @Sort(comparator=CellComparator.class)
+    @OrderBy("row,column")
     public Set<GridCell> getCells () {
         return cells;
     }

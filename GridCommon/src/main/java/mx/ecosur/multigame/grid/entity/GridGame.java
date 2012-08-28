@@ -30,8 +30,6 @@ import mx.ecosur.multigame.grid.MoveComparator;
 import mx.ecosur.multigame.grid.comparator.PlayerComparator;
 import mx.ecosur.multigame.model.interfaces.*;
 import org.drools.KnowledgeBase;
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
 
 @NamedQueries( {
     @NamedQuery(name = "GridGame.GetCurrentGames",
@@ -104,7 +102,7 @@ public abstract class GridGame implements Game, Cloneable {
      * @return the players
      */
     @OneToMany (cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
-    @Sort(type= SortType.COMPARATOR, comparator=PlayerComparator.class)
+    @OrderBy("id")
     public Set<GridPlayer> getPlayers() {
         return players;
     }
@@ -245,7 +243,7 @@ public abstract class GridGame implements Game, Cloneable {
     }
 
     @OneToMany (cascade={CascadeType.PERSIST, CascadeType.MERGE}, fetch=FetchType.EAGER)
-    @Sort(type= SortType.COMPARATOR, comparator=MoveComparator.class)
+    @OrderBy()
     public Set<GridMove> getMoves() {
         if (moves == null)
             moves = new TreeSet<GridMove>(new MoveComparator());
