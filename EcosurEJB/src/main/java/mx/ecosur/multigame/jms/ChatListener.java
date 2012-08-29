@@ -30,9 +30,7 @@ import mx.ecosur.multigame.ejb.interfaces.SharedBoardLocal;
 import mx.ecosur.multigame.enums.GameEvent;
 import mx.ecosur.multigame.model.interfaces.ChatMessage;
 
-@RunAs("j2ee")
 @MessageDriven(mappedName = "MultiGame")
-@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class ChatListener implements MessageListener {
 
     private static final Logger logger = Logger.getLogger(ChatListener.class.getCanonicalName());
@@ -44,6 +42,7 @@ public class ChatListener implements MessageListener {
      * Simple onMessage method appends the name of the Registrant that sent a
      * message, and the messages contents to the SharedBoard stream
      */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void onMessage(Message message) {
 
         ObjectMessage msg = (ObjectMessage) message;

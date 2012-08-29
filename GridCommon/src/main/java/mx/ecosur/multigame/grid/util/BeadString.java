@@ -197,7 +197,6 @@ public class BeadString implements Serializable, Cloneable {
         return ret;
     }
 
-    @Override
     public Object clone() throws CloneNotSupportedException {
         super.clone();
         BeadString ret = new BeadString ();
@@ -208,7 +207,6 @@ public class BeadString implements Serializable, Cloneable {
         return ret;
     }
 
-    @Override
     public String toString() {
         StringBuffer buf = new StringBuffer ("BeadString [");
         for (GridCell cell : beads) {
@@ -219,7 +217,6 @@ public class BeadString implements Serializable, Cloneable {
         return buf.toString();
     }
 
-    @Override
     public boolean equals(Object obj) {
         boolean ret;
         if (obj instanceof BeadString){
@@ -230,7 +227,6 @@ public class BeadString implements Serializable, Cloneable {
         return ret;
     }
 
-    @Override
     public int hashCode() {
         return new HashCodeBuilder().append(beads).hashCode();
     }

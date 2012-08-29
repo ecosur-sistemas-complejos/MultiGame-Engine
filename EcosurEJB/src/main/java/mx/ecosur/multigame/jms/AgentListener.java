@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2010 ECOSUR, Andrew Waterman and Max Pimm
+* Copyright (C) 2010, 2012 ECOSUR, Andrew Waterman and Max Pimm
 *
 * Licensed under the Academic Free License v. 3.0.
 * http://www.opensource.org/licenses/afl-3.0.php
@@ -13,15 +13,8 @@ package mx.ecosur.multigame.jms;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Logger;
 
-import javax.annotation.Resource;
-import javax.annotation.security.RunAs;
-import javax.ejb.*;
-import javax.jms.*;
-
-import mx.ecosur.multigame.MessageSender;
 import mx.ecosur.multigame.ejb.interfaces.SharedBoardLocal;
 
 import mx.ecosur.multigame.enums.GameEvent;
@@ -33,26 +26,33 @@ import mx.ecosur.multigame.exception.InvalidMoveException;
 import mx.ecosur.multigame.exception.InvalidSuggestionException;
 import mx.ecosur.multigame.model.interfaces.*;
 
+import javax.ejb.EJB;
+import javax.ejb.MessageDriven;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.ObjectMessage;
 
-@RunAs("j2ee")
+
 @MessageDriven(mappedName = "MultiGame")
-@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class AgentListener implements MessageListener {
 
     @EJB
     private SharedBoardLocal sharedBoard;
 
-    private static Logger logger = Logger.getLogger(AgentListener.class.getCanonicalName());
+    private static final Logger logger = Logger.getLogger(AgentListener.class.getCanonicalName());
 
-    private static GameEvent[] suggestionEvents = { GameEvent.SUGGESTION_APPLIED, GameEvent.SUGGESTION_EVALUATED};
+    private static final GameEvent[] suggestionEvents = { GameEvent.SUGGESTION_APPLIED, GameEvent.SUGGESTION_EVALUATED};
 
-    private static final long serialVersionUID = -312450142866686545L;
-
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void onMessage(Message message) {
         try {
             String gameEvent = message.getStringProperty("GAME_EVENT");
             GameEvent event = GameEvent.valueOf(gameEvent);
             ObjectMessage msg = (ObjectMessage) message;
+
             if (event.equals(GameEvent.PLAYER_CHANGE)) {
                 Game game = (Game) msg.getObject();
                 List<GamePlayer> players = game.listPlayers();
@@ -92,7 +92,7 @@ public class AgentListener implements MessageListener {
                 if (event.equals(possible)) {
                     Suggestion suggestion = (Suggestion) msg.getObject();
                     SuggestionStatus oldStatus = suggestion.getStatus();
-                    int gameId = new Integer (message.getStringProperty("GAME_ID")).intValue();
+                    int gameId = Integer.parseInt(message.getStringProperty("GAME_ID"));
                     Game game = sharedBoard.getGame(gameId);
                     List<GamePlayer> players = game.listPlayers();
                     for (GamePlayer p : players) {
@@ -109,7 +109,8 @@ public class AgentListener implements MessageListener {
                     }
                 }
             }
-
+            /* Acknowledge the durable message */
+            msg.acknowledge();
         } catch (JMSException e) {
             logger.severe("Unable to process game message: " + e.getMessage());
         } catch (InvalidSuggestionException e) {

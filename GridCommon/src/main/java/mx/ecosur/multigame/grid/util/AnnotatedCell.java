@@ -45,12 +45,10 @@ public class AnnotatedCell {
             return cell;
     }
 
-    @Override
     public String toString() {
             return direction.toString() + ", " + cell.toString();
     }
 
-    @Override
     public boolean equals(Object obj) {
         if (obj instanceof AnnotatedCell) {
             AnnotatedCell comparison = (AnnotatedCell) obj;
@@ -60,7 +58,6 @@ public class AnnotatedCell {
             return super.equals(obj);
     }
 
-    @Override
     public int hashCode() {
         return new HashCodeBuilder().append(cell).append(direction).hashCode();
     }

@@ -30,6 +30,8 @@ import javax.jms.Topic;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import mx.ecosur.multigame.dao.GameDAO;
 import mx.ecosur.multigame.enums.Event;
@@ -44,6 +46,8 @@ public class MessageSender {
     protected static final String CONNECTION_FACTORY_JNDI_NAME = "MultiGameConnectionFactory";
 
     private static final String TOPIC_JNDI_NAME = "MultiGame";
+
+    private static long TTL = 120000;
 
     @Resource(mappedName = CONNECTION_FACTORY_JNDI_NAME)
     protected ConnectionFactory connectionFactory;
@@ -100,15 +104,17 @@ public class MessageSender {
         }
     }
 
-    public void sendMessage(int id, Event event, Serializable body)
-    {
-        if (connectionFactory == null)
+    public void sendMessage(int id, Event event, Serializable body) {
+        if (connectionFactory == null) {
             initialize();
+        }
+
         try {
             Connection connection = connectionFactory.createConnection();
             Session session = connection.createSession(false,
                             Session.AUTO_ACKNOWLEDGE);
             MessageProducer producer = session.createProducer(topic);
+            producer.setTimeToLive(TTL);
             ObjectMessage message = session.createObjectMessage();
 
             /* Some awkward processing, to pay for the openness of the signature */
