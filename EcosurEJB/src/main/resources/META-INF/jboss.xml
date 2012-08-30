@@ -9,18 +9,25 @@
             <ejb-name>SharedBoard</ejb-name>
             <jndi-name>mx.ecosur.multigame.ejb.interfaces.SharedBoardRemote</jndi-name>
         </session>
+        <!-- Todo: Move configuration into MDB annotations -->
         <message-driven>
-            <ejb-name>AgentListener</ejb-name>
+            <ejb-name>PlayerChangeListener</ejb-name>
             <destination-jndi-name>topic/MultiGame</destination-jndi-name>
             <activation-config>
                 <activation-config-property>
                     <activation-config-property-name>destinationType</activation-config-property-name>
                     <activation-config-property-value>javax.jms.Topic</activation-config-property-value>
                 </activation-config-property>
-                <!--activation-config-property>
-                    <activation-config-property-name>user</activation-config-property-name>
-                    <activation-config-property-value>j2ee</activation-config-property-value>
-                </activation-config-property-->
+            </activation-config>
+        </message-driven>
+        <message-driven>
+            <ejb-name>SuggestionListener</ejb-name>
+            <destination-jndi-name>topic/MultiGame</destination-jndi-name>
+             <activation-config>
+                <activation-config-property>
+                    <activation-config-property-name>destinationType</activation-config-property-name>
+                    <activation-config-property-value>javax.jms.Topic</activation-config-property-value>
+                </activation-config-property>
             </activation-config>
         </message-driven>
         <message-driven>
@@ -31,10 +38,6 @@
                     <activation-config-property-name>destinationType</activation-config-property-name>
                     <activation-config-property-value>javax.jms.Topic</activation-config-property-value>
                 </activation-config-property>
-                <!--activation-config-property>
-                    <activation-config-property-name>user</activation-config-property-name>
-                    <activation-config-property-value>j2ee</activation-config-property-value>
-                </activation-config-property-->
             </activation-config>
         </message-driven>
     </enterprise-beans>

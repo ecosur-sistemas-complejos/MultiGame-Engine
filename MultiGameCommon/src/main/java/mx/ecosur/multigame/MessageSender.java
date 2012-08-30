@@ -41,6 +41,9 @@ import mx.ecosur.multigame.model.interfaces.*;
 
 public class MessageSender {
 
+    @Resource(mappedName = CONNECTION_FACTORY_JNDI_NAME)
+    protected ConnectionFactory connectionFactory;
+
     private static Logger logger = Logger.getLogger(MessageSender.class.getCanonicalName());
 
     protected static final String CONNECTION_FACTORY_JNDI_NAME = "MultiGameConnectionFactory";
@@ -48,10 +51,6 @@ public class MessageSender {
     private static final String TOPIC_JNDI_NAME = "MultiGame";
 
     private static long TTL = 120000;
-
-    @Resource(mappedName = CONNECTION_FACTORY_JNDI_NAME)
-    protected ConnectionFactory connectionFactory;
-
     private String topicName;
 
     private Topic topic;
