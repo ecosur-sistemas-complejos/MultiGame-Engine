@@ -45,18 +45,16 @@ public class SuggestionListener implements MessageListener {
             Object [] data = (Object[]) msg.getObject();
             Game game = (Game) data[ 0 ];
             Suggestion suggestion = (Suggestion) data[ 1 ];
-            SuggestionStatus oldStatus = suggestion.getStatus();
             if (game.getState().equals(GameState.PLAY)) {
                 List<GamePlayer> players = game.listPlayers();
                 for (GamePlayer p : players) {
                     if (p instanceof Agent) {
                         Agent agent = (Agent) p;
-                        suggestion = (agent.processSuggestion (game, suggestion));
-                        SuggestionStatus newStatus = suggestion.getStatus();
-                        if (oldStatus != newStatus && (
-                                newStatus.equals(SuggestionStatus.ACCEPT) || newStatus.equals(SuggestionStatus.REJECT)))
-                        {
-                            sharedBoard.makeSuggestion (game, suggestion);
+                        suggestion = (agent.processSuggestion(game, suggestion));
+                        SuggestionStatus status = suggestion.getStatus();
+                        if (status == SuggestionStatus.ACCEPT || status == SuggestionStatus.REJECT) {
+                            sharedBoard.makeSuggestion(game, suggestion);
+                            break;
                         }
                     }
                 }

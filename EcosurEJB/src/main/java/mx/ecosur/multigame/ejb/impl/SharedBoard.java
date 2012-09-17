@@ -41,7 +41,7 @@ import mx.ecosur.multigame.model.interfaces.*;
 
 @Stateless
 @RolesAllowed("MultiGame")
-@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class SharedBoard implements SharedBoardLocal, SharedBoardRemote {
 
 
@@ -71,32 +71,32 @@ public class SharedBoard implements SharedBoardLocal, SharedBoardRemote {
      * @see mx.ecosur.multigame.ejb.SharedBoardRemote#move(mx.ecosur.multigame.entity.Move)
      */
     public Move doMove(Game game, Move move) throws InvalidMoveException {
+        em.joinTransaction();
         move = em.merge(move);
-        game = em.find(game.getClass(), game.getId());
-
-        /* Now that entities are managed, execute rules on move and game */
+        game = em.merge(game);
         game.move (move);
         em.flush();
+
         if (move.getStatus().equals(MoveStatus.INVALID))
             throw new InvalidMoveException ("INVALID Move. [" + move.toString() + "]");
         else if (move.getStatus().equals(MoveStatus.EXPIRED))
             throw new InvalidMoveException("EXPIRED move. [ " + move.toString() + "]");
 
         /* Good move? Message downstream players */
-        if (move.getStatus() != MoveStatus.INVALID)
+        if (move.getStatus() != MoveStatus.INVALID) {
             game.getMessageSender().sendPlayerChange(game);
+        }
         return move;
     }
 
 
     public Suggestion makeSuggestion(Game game, Suggestion suggestion) throws InvalidSuggestionException {
-        Move move  = em.merge(suggestion.listMove());
+        em.joinTransaction();
         suggestion = em.merge(suggestion);
-        /* Move must be reattached as em removes it from the suggestion after the merge */
-        suggestion.attachMove(move);
         game = em.find(game.getClass(), game.getId());
         suggestion = game.suggest(suggestion);
         em.flush();
+
         if (suggestion.getStatus().equals(SuggestionStatus.INVALID))
             throw new InvalidSuggestionException ("INVALID Move suggested!");
         return suggestion;
@@ -111,6 +111,7 @@ public class SharedBoard implements SharedBoardLocal, SharedBoardRemote {
     }
 
     public ChatMessage addMessage(ChatMessage chatMessage) {
+        em.joinTransaction();
         return em.merge (chatMessage);
     }
 
@@ -118,6 +119,7 @@ public class SharedBoard implements SharedBoardLocal, SharedBoardRemote {
      * @see mx.ecosur.multigame.ejb.interfaces.SharedBoardInterface#updateMove(mx.ecosur.multigame.entity.Move)
      */
     public Move updateMove(Move move) {
+        em.joinTransaction();
         /* Get current state of player */
         GamePlayer p = move.getPlayerModel();
         p = (GamePlayer) em.find(p.getClass(), p.getId());

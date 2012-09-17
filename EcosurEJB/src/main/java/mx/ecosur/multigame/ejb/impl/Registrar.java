@@ -35,7 +35,7 @@ import mx.ecosur.multigame.model.interfaces.*;
 @SuppressWarnings({"JpaQueryApiInspection"})
 @Stateless
 @RolesAllowed("MultiGame")
-@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class Registrar implements RegistrarRemote, RegistrarLocal {
 
     @PersistenceContext (unitName = "MultiGamePU")
@@ -75,14 +75,10 @@ public class Registrar implements RegistrarRemote, RegistrarLocal {
     public Game registerPlayer (Game game, Registrant registrant)
             throws InvalidRegistrationException
     {
-        if (game.getId() == 0)
-            em.persist(game);
-        else
-            game = em.find(game.getClass(), game.getId());
+        game = em.merge(game);
         registrant = em.merge(registrant);
         registrant.setLastRegistration(System.currentTimeMillis());
         game.registerPlayer (registrant);
-        em.flush();
         game.getMessageSender().sendPlayerChange(game);
         return game;
     }
@@ -94,23 +90,18 @@ public class Registrar implements RegistrarRemote, RegistrarLocal {
     public Game registerAgent(Game game, Agent agent) throws
             InvalidRegistrationException
     {
-        if (game.getId() == 0)
-            em.persist(game);
-        else
-            game = em.find(game.getClass(), game.getId());
+        game = em.merge(game);
         game.registerAgent (agent);
-        em.flush();
         game.getMessageSender().sendPlayerChange(game);
         return game;
     }
 
     public Game unregister(Game game, GamePlayer player) throws InvalidRegistrationException {
-        game = em.find(game.getClass(), game.getId());
+        game = em.merge(game);
         player = em.merge(player);
         /* Modify game state */
         game.removePlayer(player);
         game.setState(GameState.ENDED);
-        em.flush();
         /* Message change */
         game.getMessageSender().sendPlayerChange(game);
         return game;
