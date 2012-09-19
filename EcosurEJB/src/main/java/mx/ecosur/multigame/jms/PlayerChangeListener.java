@@ -29,8 +29,11 @@ import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-@MessageDriven(mappedName = "MultiGame",  activationConfig = @ActivationConfigProperty(
-        propertyName = "messageSelector", propertyValue = "GAME_EVENT = 'PLAYER_CHANGE'"))
+@MessageDriven(mappedName = "MultiGame",  activationConfig = {
+        @ActivationConfigProperty(
+            propertyName = "messageSelector", propertyValue = "GAME_EVENT = 'PLAYER_CHANGE'"),
+        @ActivationConfigProperty(
+            propertyName = "destinationType", propertyValue = "javax.jms.Topic")})
 public class PlayerChangeListener implements MessageListener {
 
     @EJB
@@ -55,31 +58,27 @@ public class PlayerChangeListener implements MessageListener {
             }
 
             if (agent != null) {
-                game = sharedBoard.getGame(game.getId());
-                if (game.getState().equals(GameState.PLAY)) {
-                    List<Move> moves = agent.determineMoves(game);
-                    for (Move m : moves) {
-                        m.setPlayerModel(agent);
-                        try {
-                            sharedBoard.doMove(game, m);
-                        } catch (InvalidMoveException e) {
-                            logger.warning ("InvalidMove: " + e.getLocalizedMessage() + ". Out of " + moves.size()
-                                    + " proposed.");
-                            continue;
-                        }
-                        if (m.getStatus() != MoveStatus.INVALID) {
-                            break;
-                        }
+                List<Move> moves = agent.determineMoves(game);
+                for (Move m : moves) {
+                    m.setPlayerModel(agent);
+                    try {
+                        sharedBoard.doMove(game, m);
+                    } catch (InvalidMoveException e) {
+                        continue;
                     }
+                    if (m.getStatus() != MoveStatus.INVALID) {
+                        break;
+                    }
+                }
 
-                    if (moves == Collections.EMPTY_LIST || moves.size() == 0) {
-                        logger.severe("Agent [" + agent.getName() + "] suggested no moves!");
-                    }
+                if (moves == Collections.EMPTY_LIST || moves.size() == 0) {
+                    logger.severe("Agent [" + agent.getName() + "] suggested no moves!");
                 }
             }
 
             /* Acknowledge the durable message */
             msg.acknowledge();
+
         } catch (JMSException e) {
             logger.severe("Unable to process game message: " + e.getMessage());
         }

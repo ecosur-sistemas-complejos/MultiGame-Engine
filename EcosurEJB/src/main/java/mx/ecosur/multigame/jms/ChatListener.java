@@ -27,8 +27,11 @@ import mx.ecosur.multigame.enums.GameEvent;
 import mx.ecosur.multigame.model.interfaces.ChatMessage;
 
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-@MessageDriven(mappedName = "MultiGame", activationConfig = @ActivationConfigProperty(
-        propertyName = "messageSelector", propertyValue = "GAME_EVENT = 'CHAT'"))
+@MessageDriven(mappedName = "MultiGame", activationConfig = {
+        @ActivationConfigProperty(
+                propertyName = "messageSelector", propertyValue = "GAME_EVENT = 'CHAT'"),
+        @ActivationConfigProperty(
+                propertyName = "destinationType", propertyValue = "javax.jms.Topic")})
 public class ChatListener implements MessageListener {
 
     private static final Logger logger = Logger.getLogger(ChatListener.class.getCanonicalName());

@@ -30,8 +30,11 @@ import java.util.logging.Logger;
  * @author Andrew Waterman <awaterma@ecosur.mx>
  */
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-@MessageDriven(mappedName = "MultiGame", activationConfig = @ActivationConfigProperty(
-        propertyName = "messageSelector", propertyValue = "GAME_EVENT = 'SUGGESTION_EVALUATED'"))
+@MessageDriven(mappedName = "MultiGame", activationConfig = {
+        @ActivationConfigProperty(
+                propertyName = "messageSelector", propertyValue = "GAME_EVENT = 'SUGGESTION_EVALUATED'"),
+        @ActivationConfigProperty(
+                propertyName = "destinationType", propertyValue = "javax.jms.Topic")})
 public class SuggestionListener implements MessageListener {
 
     @EJB
@@ -44,8 +47,8 @@ public class SuggestionListener implements MessageListener {
             ObjectMessage msg = (ObjectMessage) message;
             Object [] data = (Object[]) msg.getObject();
             Game game = (Game) data[ 0 ];
-            Suggestion suggestion = (Suggestion) data[ 1 ];
             if (game.getState().equals(GameState.PLAY)) {
+                Suggestion suggestion = (Suggestion) data[ 1 ];
                 List<GamePlayer> players = game.listPlayers();
                 for (GamePlayer p : players) {
                     if (p instanceof Agent) {

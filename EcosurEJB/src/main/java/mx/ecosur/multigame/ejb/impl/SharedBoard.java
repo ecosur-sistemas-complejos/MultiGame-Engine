@@ -30,6 +30,7 @@ import javax.persistence.*;
 
 import mx.ecosur.multigame.ejb.interfaces.SharedBoardLocal;
 import mx.ecosur.multigame.ejb.interfaces.SharedBoardRemote;
+import mx.ecosur.multigame.enums.GameState;
 import mx.ecosur.multigame.enums.SuggestionStatus;
 import mx.ecosur.multigame.exception.InvalidMoveException;
 
@@ -73,7 +74,7 @@ public class SharedBoard implements SharedBoardLocal, SharedBoardRemote {
     public Move doMove(Game game, Move move) throws InvalidMoveException {
         em.joinTransaction();
         move = em.merge(move);
-        game = em.merge(game);
+        game = em.find(game.getClass(), game.getId());
         game.move (move);
         em.flush();
 
@@ -82,8 +83,8 @@ public class SharedBoard implements SharedBoardLocal, SharedBoardRemote {
         else if (move.getStatus().equals(MoveStatus.EXPIRED))
             throw new InvalidMoveException("EXPIRED move. [ " + move.toString() + "]");
 
-        /* Good move? Message downstream players */
-        if (move.getStatus() != MoveStatus.INVALID) {
+        /* Good move? Game still in progress? Message downstream players */
+        if (move.getStatus() != MoveStatus.INVALID && game.getState() == GameState.PLAY) {
             game.getMessageSender().sendPlayerChange(game);
         }
         return move;
