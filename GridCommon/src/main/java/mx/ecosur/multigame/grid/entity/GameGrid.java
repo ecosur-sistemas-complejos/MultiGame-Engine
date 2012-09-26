@@ -38,13 +38,6 @@ public class GameGrid implements Serializable, Cloneable {
         super();
     }
 
-    /**
-     * Initializes a GameGrid object containing the List of Cells.
-     */
-    public GameGrid(TreeSet<GridCell> cells) {
-        this.cells = cells;
-    }
-
     @Id
     @GeneratedValue
     public int getId() {
@@ -56,31 +49,21 @@ public class GameGrid implements Serializable, Cloneable {
     }
 
     public GridCell getLocation (GridCell location) {
-        GridCell ret = null;
-        if (location != null && !isEmpty()) {
-            CellComparator comparator = new CellComparator();
-            TreeSet<GridCell> treeSet = new TreeSet<GridCell>(comparator);
-            for (GridCell cell : cells) {
-                treeSet.add(cell);
-            }
-
-            SortedSet<GridCell> sublist = treeSet.tailSet(location);
-
-            for (GridCell c : sublist) {
-                int value = comparator.compare(location, c);
-                if (value == 0) {
-                    ret = c;
-                    break;
+        /* Simple consecutive search o(N) time */
+        if (cells != null) {
+            for (GridCell g : cells) {
+                if (g.equals(location)) {
+                    return g;
                 }
             }
         }
 
-        return ret;
+        return null;
     }
 
     public void updateCell (GridCell cell) {
         if (cells == null)
-            cells = new TreeSet<GridCell>(new CellComparator());
+            cells = new HashSet<GridCell>();
         if (cells.contains(cell))
                 cells.remove(cell);
         cells.add(cell);
@@ -97,7 +80,7 @@ public class GameGrid implements Serializable, Cloneable {
     }
 
     public void setEmpty (boolean disregard) {
-
+        /* Does nothing */
     }
 
     @OneToMany (cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
@@ -136,7 +119,7 @@ public class GameGrid implements Serializable, Cloneable {
         super.clone();
         GameGrid ret = new GameGrid();
         if (!isEmpty()) {
-            Set<GridCell> cloneCells = new TreeSet<GridCell>(new CellComparator());
+            Set<GridCell> cloneCells = new HashSet<GridCell>();
             ret.setCells(cloneCells);
             for (GridCell cell : cells) {
                 GridCell cloneCell = cell.clone();

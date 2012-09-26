@@ -107,7 +107,7 @@ public class GridCell implements Cell, Cloneable {
         boolean ret = false;
         if (obj instanceof GridCell && obj != null) {
             GridCell c = (GridCell) obj;
-            ret = getRow() == c.getRow() && getColumn() == c.getColumn() && getColor().equals(c.getColor());
+            ret = getRow() == c.getRow() && getColumn() == c.getColumn();
         }
 
         return ret;
@@ -115,6 +115,6 @@ public class GridCell implements Cell, Cloneable {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(color).append(row).append(column).toHashCode();
+        return new HashCodeBuilder().append(row).append(column).toHashCode();
     }
 }
