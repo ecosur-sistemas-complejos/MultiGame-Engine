@@ -49,7 +49,8 @@ public class ChatListener implements MessageListener {
             String gameEvent = message.getStringProperty("GAME_EVENT");
             if (gameEvent.equals(GameEvent.CHAT.name())) {
                 ChatMessage chatMessage = (ChatMessage) msg.getObject();
-                sharedBoard.addMessage(chatMessage);
+                logger.finest(chatMessage.toString()); // Chat messages will show up with debug logging on (for testing)
+                /* sharedBoard.addMessage(chatMessage); */ // removed due to privacy considerations (LGB)
                 msg.acknowledge();
             }
         } catch (Exception e) {
