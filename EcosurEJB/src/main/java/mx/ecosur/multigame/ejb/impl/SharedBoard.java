@@ -77,7 +77,6 @@ public class SharedBoard implements SharedBoardLocal, SharedBoardRemote {
         game = em.find(game.getClass(), game.getId());
         game.move (move);
         em.flush();
-
         if (move.getStatus().equals(MoveStatus.INVALID))
             throw new InvalidMoveException ("INVALID Move. [" + move.toString() + "]");
         else if (move.getStatus().equals(MoveStatus.EXPIRED))
