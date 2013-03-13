@@ -1,16 +1,8 @@
 /*
- * Copyright (C) 2010 ECOSUR, Andrew Waterman and Max Pimm
+ * Copyright (C) 2010-2013 ECOSUR, Andrew Waterman and Max Pimm
  *
  * Licensed under the Academic Free License v. 3.0.
  * http://www.opensource.org/licenses/afl-3.0.php
- */
-
-/**
- * A Game stores stateful information about a running game. E.G., the grid's 
- * dimensions, the list of active Cells, and the Players involved.
- * 
- * @author awaterma@ecosur.mx
- *
  */
 
 package mx.ecosur.multigame.grid.entity;
@@ -31,6 +23,13 @@ import mx.ecosur.multigame.grid.comparator.PlayerComparator;
 import mx.ecosur.multigame.model.interfaces.*;
 import org.drools.KnowledgeBase;
 
+/**
+ * A Game stores stateful information about a running game. E.G., the grid's 
+ * dimensions, the list of active Cells, and the Players involved.
+ * 
+ * @author awaterma@ecosur.mx
+ *
+ */
 @NamedQueries( {
     @NamedQuery(name = "GridGame.GetCurrentGames",
         query = "SELECT DISTINCT gme FROM GridGame AS gme JOIN gme.players AS player " +
