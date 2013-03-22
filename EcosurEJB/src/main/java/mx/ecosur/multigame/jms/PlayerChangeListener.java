@@ -29,7 +29,9 @@ import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-@MessageDriven(mappedName = "MultiGame",  activationConfig = {
+@MessageDriven(name = "PlayerChangeListenerMDB",  activationConfig = {
+        @ActivationConfigProperty(
+                propertyName = "destination", propertyValue = "topic/MultiGame"),
         @ActivationConfigProperty(
             propertyName = "messageSelector", propertyValue = "GAME_EVENT = 'PLAYER_CHANGE'"),
         @ActivationConfigProperty(
