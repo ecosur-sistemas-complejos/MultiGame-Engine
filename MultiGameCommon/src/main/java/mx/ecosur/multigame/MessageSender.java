@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2010-2013 ECOSUR, Andrew Waterman and Max Pimm
+* Copyright (C) 2010 ECOSUR, Andrew Waterman and Max Pimm
 * 
 * Licensed under the Academic Free License v. 3.0. 
 * http://www.opensource.org/licenses/afl-3.0.php
@@ -30,6 +30,8 @@ import javax.jms.Topic;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import mx.ecosur.multigame.dao.GameDAO;
 import mx.ecosur.multigame.enums.Event;
@@ -44,9 +46,9 @@ public class MessageSender {
 
     private static Logger logger = Logger.getLogger(MessageSender.class.getCanonicalName());
 
-    protected static final String CONNECTION_FACTORY_JNDI_NAME = "/ConnectionFactory";
+    protected static final String CONNECTION_FACTORY_JNDI_NAME = "MultiGameConnectionFactory";
 
-    private static final String TOPIC_JNDI_NAME = "/topic/MultiGame";
+    private static final String TOPIC_JNDI_NAME = "MultiGame";
 
     private static long TTL = 120000;
     private String topicName;
@@ -67,6 +69,7 @@ public class MessageSender {
 
     public MessageSender (Context context, String topicName) {
         this (topicName);
+
         try {
             if (connectionFactory == null)
                 connectionFactory = (ConnectionFactory) context.lookup(CONNECTION_FACTORY_JNDI_NAME);

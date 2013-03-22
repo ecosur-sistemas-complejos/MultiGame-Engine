@@ -7,8 +7,19 @@
         </session>
         <session>
             <ejb-name>SharedBoard</ejb-name>
-            <jndi-name></jndi-name>
             <jndi-name>mx.ecosur.multigame.ejb.interfaces.SharedBoardRemote</jndi-name>
         </session>
+        <message-driven>
+            <ejb-name>PlayerChangeListener</ejb-name>
+            <destination-jndi-name>topic/MultiGame</destination-jndi-name>
+        </message-driven>
+        <message-driven>
+            <ejb-name>SuggestionListener</ejb-name>
+            <destination-jndi-name>topic/MultiGame</destination-jndi-name>
+        </message-driven>
+        <message-driven>
+            <ejb-name>ChatListener</ejb-name>
+            <destination-jndi-name>topic/MultiGame</destination-jndi-name>
+        </message-driven>
     </enterprise-beans>
 </jboss>

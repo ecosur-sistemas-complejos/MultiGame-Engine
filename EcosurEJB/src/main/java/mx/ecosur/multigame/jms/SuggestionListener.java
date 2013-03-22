@@ -30,9 +30,7 @@ import java.util.logging.Logger;
  * @author Andrew Waterman <awaterma@ecosur.mx>
  */
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-@MessageDriven(name = "SuggestionListenerMDB", activationConfig = {
-        @ActivationConfigProperty(
-                propertyName = "destination", propertyValue = "topic/MultiGame"),
+@MessageDriven(mappedName = "MultiGame", activationConfig = {
         @ActivationConfigProperty(
                 propertyName = "messageSelector", propertyValue = "GAME_EVENT = 'SUGGESTION_EVALUATED'"),
         @ActivationConfigProperty(
