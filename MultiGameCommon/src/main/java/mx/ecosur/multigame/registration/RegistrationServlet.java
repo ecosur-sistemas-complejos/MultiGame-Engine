@@ -99,9 +99,9 @@ public class RegistrationServlet extends HttpServlet {
             try {
                 con = getConnection();
                 /* Using prepared statements to avoid SQL injection issues */
-                PreparedStatement userInsert = con.prepareStatement("insert into user (username, password, firstname, " +
+                PreparedStatement userInsert = con.prepareStatement("insert into User (username, password, firstname, " +
                         "lastname, email) values (?, md5(?), ?, ?, ?)");
-                PreparedStatement roleInsert = con.prepareStatement("insert into role (username, name) values (?, " +
+                PreparedStatement roleInsert = con.prepareStatement("insert into Role (username, name) values (?, " +
                         "'MultiGame')");
                 userInsert.setString(1,username);
                 userInsert.setString(2,password);
@@ -161,30 +161,32 @@ public class RegistrationServlet extends HttpServlet {
                 String j_username = request.getParameter("j_username");
                 if (j_username != null) {
                    /* Check for the user in the db */
-                   PreparedStatement pstmt = con.prepareStatement("select * from user where username = ?");
-                   PreparedStatement uidUpdate = con.prepareStatement("update user set uid= ? where id = ?");
+                   PreparedStatement pstmt = con.prepareStatement("select * from User where username = ?");
+                   PreparedStatement uidUpdate = con.prepareStatement("update User set uid= ? where id = ?");
                    pstmt.setString(1,j_username);
                    ResultSet rs = pstmt.executeQuery();
                    if (rs.next()) {
+                       UUID uid = null;
                        int idCol = rs.findColumn("id");
                        int uidCol = rs.findColumn("uid");
                        int emailCol = rs.findColumn("email");
                        String guard = rs.getString(uidCol);
+                       String email = rs.getString(emailCol);
+                       int id = rs.getInt(idCol);
                        if (guard == null) {
-                           String email = rs.getString(emailCol);
-                           int id = rs.getInt(idCol);
-                           UUID uid = UUID.randomUUID();
-                           uidUpdate.setString(1, uid.toString());
-                           uidUpdate.setInt(2, id);
-                           uidUpdate.execute();
-                           /* Mail uid to user */
-                           mailUID(email, uid);
+                        uid = UUID.randomUUID();
+                        uidUpdate.setString(1, uid.toString());
+                        uidUpdate.setInt(2, id);
+                        uidUpdate.execute();
+                       } else {
+                        uid = UUID.fromString(guard);
                        }
+                       /* Mail uid to user */
+                       mailUID(email, uid);
                    }
                    rs.close();
                 }
                 con.close();
-
                 RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/login.jsp");
                 dispatcher.forward(request,response);
 
@@ -210,7 +212,7 @@ public class RegistrationServlet extends HttpServlet {
                 message.setSubject("Password/Contraseña");
                 message.setRecipients(javax.mail.Message.RecipientType.TO,
                         javax.mail.internet.InternetAddress.parse(email, false));
-                message.setText("http://localhost:8080/multigame/update.jsp?uid=" + uid.toString());
+                message.setText("http://chiapasgames.org:8080/multi-game/update.jsp?uid=" + uid.toString());
                 message.saveChanges();
                 Transport t = mailSession.getTransport("smtp");
                 t.connect();
@@ -242,16 +244,12 @@ public class RegistrationServlet extends HttpServlet {
             String password  = request.getParameter("password1");
             String passmatch = request.getParameter("password2");
             if (!password.equals(passmatch))
-                throw new ServletException("Passwords don't match! " + password + " != " + passmatch);
-
-            log("uid=" + uid);
-            log("password=" + password);
-
+                throw new ServletException("Passwords don't match!");
             if (uid != null && password != null) {
                 try {
                     con = getConnection();
-                    PreparedStatement update = con.prepareStatement("update user set password = md5(?) where uid = ?");
-                    PreparedStatement delete = con.prepareStatement("update user set uid = null where uid = ?");
+                    PreparedStatement update = con.prepareStatement("update User set password = md5(?) where uid = ?");
+                    PreparedStatement delete = con.prepareStatement("update User set uid = null where uid = ?");
                     update.setString(1,password);
                     update.setString(2,uid);
                     delete.setString(1,uid);
